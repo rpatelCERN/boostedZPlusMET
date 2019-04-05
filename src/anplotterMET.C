@@ -6,7 +6,7 @@
 #include "THStack.h"
 #include "hist.C"
 void anplotterMET(){
-gROOT->LoadMacro("CMS_lumi.C");
+gROOT->LoadMacro("tdrstyle.C");
 //setTDRStyle();
  TFile* inputFile =new TFile("SkimFileMass.root", "READ");
  OtherTree=(TTree*)inputFile->Get("Other");
