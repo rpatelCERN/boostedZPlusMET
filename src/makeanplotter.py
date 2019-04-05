@@ -4,10 +4,10 @@ import os
 import sys
 for ivar in range(0, len(data)):
    sys.stdout = open('anplotter{}.C'.format(data[ivar]),'w')
-   print '#include "<sstream>"\n#include "string.h"\n#include "tdrstyle.C"\n#include "CMS_lumi.C"\n#include "TH1.h"\n#include "TH1F.h"\n#include "THStack.h"\n#include "hist.C"'
+   print '#include "string.h"\n#include "tdrstyle.C"\n#include "CMS_lumi.C"\n#include "TH1.h"\n#include "TH1F.h"\n#include "THStack.h"\n#include "hist.C"'
    print 'void anplotter%s(){'%(data[ivar])
    print 'gROOT->LoadMacro("tdrstyle.C");'
-   print 'setTDRStyle();'
+   print '//setTDRStyle();'
    print ' TFile* inputFile =new TFile("SkimFileMass.root", "READ");'
    print ' OtherTree=(TTree*)inputFile->Get("Other");'
    print ' ZJetsTree=(TTree*)inputFile->Get("ZJets");'
@@ -22,6 +22,7 @@ for ivar in range(0, len(data)):
    print 'TH1D *%sSnglT = h.%sSnglT;'%(data[ivar],data[ivar])
    print 'TH1D *%sZBkg = h.%sZBkg;'%(data[ivar],data[ivar])
    print 'TH1D *%sWBkg = h.%sWBkg;'%(data[ivar],data[ivar])
+   print 'TH1D *%sTTBarBkg = h.%sTTBarBkg;'%(data[ivar],data[ivar])   
    print 'TH1D *%sQCDBkg = h.%sQCDBkg;'%(data[ivar],data[ivar])
    print 'TH1D *%sT5HH1300Sig = h.%sT5HH1300Sig;'%(data[ivar],data[ivar])
    print 'TH1D *%sT5HH1700Sig = h.%sT5HH1700Sig;'%(data[ivar],data[ivar])
@@ -78,7 +79,7 @@ for ivar in range(0, len(data)):
    print ' writeExtraText = true;'
    print ' extraText  = "     preliminary Simulation";'
    print ' lumi_sqrtS = "137.1 fb^{-1}(13 TeV)";'
-   print ' leg=new TLegend(0.5488722,0.6825806,0.914787,0.8748387,NULL,"brNDC");'
+   print ' TLegend *leg=new TLegend(0.5488722,0.6825806,0.914787,0.8748387,NULL,"brNDC");'
    print ' leg->AddEntry(%sQCDBkg, "QCD ","F");'%(data[ivar])
    print ' leg->AddEntry(%sOther, "Other","F");'%(data[ivar])
    print ' leg->AddEntry(%sSnglT, "SnglT ","F");'%(data[ivar])
