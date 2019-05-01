@@ -63,6 +63,7 @@ template<typename ntupleType>void ntupleBranchStatus(ntupleType* ntuple){
   ntuple->fChain->SetBranchStatus("JetsAK8*",1);
   ntuple->fChain->SetBranchStatus("GenJets*",1);
   ntuple->fChain->SetBranchStatus("Jets*",1);
+  ntuple->fChain->SetBranchStatus("NonPrefiringProb",1);  
   ntuple->fChain->SetBranchStatus("Weight",1);  
   ntuple->fChain->SetBranchStatus("puWeightNew",1);  
   ntuple->fChain->SetBranchStatus("TrueNumInteractions",1);  
@@ -83,7 +84,9 @@ template<typename ntupleType>void ntupleBranchStatus(ntupleType* ntuple){
   ntuple->fChain->SetBranchStatus("NJetsISR",1);
   ntuple->fChain->SetBranchStatus("madMinDeltaRStatus",1);
   ntuple->fChain->SetBranchStatus("madMinPhotonDeltaR",1);
-
+  ntuple->fChain->SetBranchStatus("LowNeutralJetFilter",1);
+  ntuple->fChain->SetBranchStatus("HTRatioDPhiTightFilter",1);
+  ntuple->fChain->SetBranchStatus("FakeJetFilter",1);
   ntuple->fChain->SetBranchStatus("GenParticles*",1);
 }
 
@@ -1076,13 +1079,13 @@ template<typename ntupleType> bool AK8JetLooseMassCut(ntupleType* ntuple){
 
 template<typename ntupleType> bool baselineCut(ntupleType* ntuple){
  
-  return ( ntuple->MET > 200.             &&
-           ntuple->HT > 200.                         &&
+  return ( ntuple->MET > 300.             &&
+           ntuple->HT > 500.                         &&
            ntuple->JetsAK8->size() >1 &&
-	   ntuple->JetsAK8->at(0).Pt() > 200. && 
+	   ntuple->JetsAK8->at(0).Pt() > 300. && 
 	   ntuple->JetsAK8_softDropMass->at(0) > baselineMassLow &&
 	   ntuple->JetsAK8_softDropMass->at(0) < baselineMassHigh &&
-           //ntuple->JetsAK8->at(1).Pt() > 200. &&
+           ntuple->JetsAK8->at(1).Pt() > 200. &&
            ntuple->JetsAK8_softDropMass->at(1) >baselineMassLow && 
            ntuple->JetsAK8_softDropMass->at(1) < baselineMassHigh
 	    &&
