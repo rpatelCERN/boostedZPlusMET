@@ -6,8 +6,8 @@
 // STL libraries
 #include <iostream>
 #include <vector>
-static const TString BASE_DIRMC="root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV16/";
-static const TString BASE_DIR="root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV16/";
+static const TString BASE_DIRMC="root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV17/";
+static const TString BASE_DIR="root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV17/";
 
 class skimSamples{
 
@@ -229,19 +229,19 @@ public :
         // - - - - - - - - - - - DATA INPUTS - - - - - - - - - -  //
         ////////////////////////////////////////////////////////////
 
-        std::vector<TString> HTMHTFileNames;
-        HTMHTFileNames.push_back("tree_HTMHT_2016B.root");
-        HTMHTFileNames.push_back("tree_HTMHT_2016C.root");
-        HTMHTFileNames.push_back("tree_HTMHT_2016D.root");
-        HTMHTFileNames.push_back("tree_HTMHT_2016E.root");
-        HTMHTFileNames.push_back("tree_HTMHT_2016F.root");
-        HTMHTFileNames.push_back("tree_HTMHT_2016G.root");
-        HTMHTFileNames.push_back("tree_HTMHT_2016H.root");
-       // HTMHTFileNames.push_back("tree_HTMHT_re2016H3.root");
+        std::vector<TString> METFileNames;
+        METFileNames.push_back("tree_MET_2016B.root");
+        METFileNames.push_back("tree_MET_2016C.root");
+        METFileNames.push_back("tree_MET_2016D.root");
+        METFileNames.push_back("tree_MET_2016E.root");
+        METFileNames.push_back("tree_MET_2016F.root");
+        METFileNames.push_back("tree_MET_2016G.root");
+        METFileNames.push_back("tree_MET_2016H.root");
+       // METFileNames.push_back("tree_HTMHT_re2016H3.root");
         if( r == kSignal || r == kLowDphi ){
             data = new TChain("tree");
-            for( int i = 0 ; i < HTMHTFileNames.size() ; i++ ){
-                data->Add(skimType+"/"+HTMHTFileNames[i]);
+            for( int i = 0 ; i < METFileNames.size() ; i++ ){
+                data->Add(skimType+"/"+METFileNames[i]);
             }    
             dataNtuple = new RA2bTree(data);
 	    ntuples.push_back(dataNtuple);
@@ -250,17 +250,17 @@ public :
 	    lineColor.push_back(1);
         }
         
-	HTMHTFileNames.resize(0);
-        HTMHTFileNames.push_back("tree_HTMHT_2017B.root");
-        HTMHTFileNames.push_back("tree_HTMHT_2017C.root");
-        HTMHTFileNames.push_back("tree_HTMHT_2017D.root");
-        HTMHTFileNames.push_back("tree_HTMHT_2017E.root");
-        HTMHTFileNames.push_back("tree_HTMHT_2017F.root");
-       // HTMHTFileNames.push_back("tree_HTMHT_re2016H3.root");
+	METFileNames.resize(0);
+        METFileNames.push_back("tree_MET_2017B.root");
+        METFileNames.push_back("tree_MET_2017C.root");
+        METFileNames.push_back("tree_MET_2017D.root");
+        METFileNames.push_back("tree_MET_2017E.root");
+        METFileNames.push_back("tree_MET_2017F.root");
+       // METFileNames.push_back("tree_HTMHT_re2016H3.root");
         if( r == kSignal || r == kLowDphi ){
             data2017 = new TChain("tree");
-            for( int i = 0 ; i < HTMHTFileNames.size() ; i++ ){
-                data2017->Add(skimType+"/"+HTMHTFileNames[i]);
+            for( int i = 0 ; i < METFileNames.size() ; i++ ){
+                data2017->Add(skimType+"/"+METFileNames[i]);
             }    
             dataNtuple = new RA2bTree(data2017);
 	    ntuples.push_back(dataNtuple);
@@ -269,6 +269,23 @@ public :
 	    lineColor.push_back(1);
         }
 
+	METFileNames.resize(0);
+        METFileNames.push_back("tree_MET_2018A.root");
+        METFileNames.push_back("tree_MET_2018B.root");
+        METFileNames.push_back("tree_MET_2018C.root");
+        METFileNames.push_back("tree_MET_2018D.root");
+       // METFileNames.push_back("tree_HTMHT_re2016H3.root");
+        if( r == kSignal || r == kLowDphi ){
+            data2018 = new TChain("tree");
+            for( int i = 0 ; i < METFileNames.size() ; i++ ){
+                data2018->Add(skimType+"/"+METFileNames[i]);
+            }    
+            dataNtuple = new RA2bTree(data2018);
+	    ntuples.push_back(dataNtuple);
+	    sampleName.push_back("data2018"); 
+	    fillColor.push_back(kWhite);
+	    lineColor.push_back(1);
+        }
         std::vector<TString> SingleElectronNames;
         SingleElectronNames.push_back("tree_SingleElectron_2016B.root");
         SingleElectronNames.push_back("tree_SingleElectron_2016C.root");
@@ -329,13 +346,11 @@ public :
 	    lineColor.push_back(1);
 
         }
-/*
         SingleElectronNames.resize(0);
-        SingleElectronNames.push_back("tree_SingleElectron_2018B.root");
-        SingleElectronNames.push_back("tree_SingleElectron_2018C.root");
-        SingleElectronNames.push_back("tree_SingleElectron_2018D.root");
-        SingleElectronNames.push_back("tree_SingleElectron_2018E.root");
-        SingleElectronNames.push_back("tree_SingleElectron_2018F.root");
+        SingleElectronNames.push_back("tree_EGamma_2018A.root");
+        SingleElectronNames.push_back("tree_EGamma_2018B.root");
+        SingleElectronNames.push_back("tree_EGamma_2018C.root");
+        SingleElectronNames.push_back("tree_EGamma_2018D.root");
         if( r == kSLe ){
             data2018 = new TChain("tree");
             for( int i = 0 ; i < SingleElectronNames.size() ; i++ ){
@@ -349,7 +364,6 @@ public :
             lineColor.push_back(1);
 
         }
-*/
         SingleMuonNames.resize(0);
         SingleMuonNames.push_back("tree_SingleMuon_2017B.root");
         SingleMuonNames.push_back("tree_SingleMuon_2017C.root");
@@ -419,7 +433,6 @@ public :
 	    fillColor.push_back(kBlack);
 	    lineColor.push_back(1);
         }
-/*
         SinglePhotonFileNames.resize(0);
         SinglePhotonFileNames.push_back("tree_EGamma_2018A.root");
         SinglePhotonFileNames.push_back("tree_EGamma_2018B.root");
@@ -436,7 +449,6 @@ public :
             fillColor.push_back(kBlack);
             lineColor.push_back(1);
         }
-*/
         std::vector<TString> T5HH750FilesNames;
         std::vector<TString> T5HH1000FilesNames;
         std::vector<TString> T5HH1100FilesNames;

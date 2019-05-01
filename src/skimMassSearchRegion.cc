@@ -22,7 +22,7 @@ using namespace std;
 int main(int argc, char** argv){
 
     skimSamples::region reg;
-    int reg_(4);
+    int reg_(0);
     bool looseCuts(false);
     defaultOptions options(argv[0],"");
     options.opts->add_options()("l,loose_cuts","apply loose jet pt cuts",cxxopts::value<bool>(looseCuts))("r,region","region to analyze",cxxopts::value<int>(reg_));
@@ -145,7 +145,10 @@ int main(int argc, char** argv){
             }else if( reg == skimSamples::kLowDphi ){
                 trigWeight=lowDphiTrigWeights(ntuple);
 	    }
-	    weight = ntuple->Weight*lumi*trigWeight;//*customPUweights(ntuple)*trigWeight;
+	    double prefireweight=1.0;
+	    if( filename.Contains("2017") && !( skims.sampleName[iSample].Contains("data")))prefireweight=ntuple->NonPrefiringProb;
+	    
+	    weight = ntuple->Weight*lumi*prefireweight;//*trigWeight;//*customPUweights(ntuple)*trigWeight;
 	    //weight = ntuple->Weight *lumi*trigWeight*customPUweights(ntuple);    
 	    //std::cout<<"Weight "<<ntuple->Weight<<std::endl;
             Weight=weight;

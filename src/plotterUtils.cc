@@ -14,7 +14,7 @@
 using namespace std;
 
 //double lumi=35862.824;
-double lumi=80000.;
+double lumi=137000.;
 
 template <typename ntupleType> class plot{
 

@@ -1001,6 +1001,15 @@ template<typename ntupleType> bool ptBinCut(double pt , int ithBin){
 }
  
 template<typename ntupleType> bool FiltersCut(ntupleType* ntuple){
+    bool HEMVeto=true;
+    TString sample = ntuple->fChain->GetFile()->GetName();
+    if(sample.Contains("2018")){
+	HEMVeto=ntuple->HEMDPhiVetoFilter;
+    	for(unsigned int e=0; e<ntuple->Electrons->size();++e){
+		if(ntuple->Electrons->at(e).Pt()<30)continue;
+		if(ntuple->Electrons->at(e).Eta()>-3.0 && ntuple->Electrons->at(e).Eta()<-1.4 && ntuple->Electrons->at(e).Phi()>-1.57 && ntuple->Electrons->at(e).Phi()<-0.67)HEMVeto=false;
+       }
+    }
     return ntuple->HBHENoiseFilter==1 && 
         ntuple->HBHEIsoNoiseFilter==1 && 
         ntuple->eeBadScFilter==1 && 
@@ -1008,7 +1017,8 @@ template<typename ntupleType> bool FiltersCut(ntupleType* ntuple){
         ntuple->NVtx>0 && 
         ntuple->MET/ntuple->CaloMET < 5. &&
         ntuple->BadPFMuonFilter == 1 &&
-        ntuple->BadChargedCandidateFilter == 1  && ntuple->globalSuperTightHalo2016Filter==1;
+        ntuple->BadChargedCandidateFilter == 1  && ntuple->globalSuperTightHalo2016Filter==1 &&
+        ntuple->LowNeutralJetFilter==1 && ntuple->HTRatioDPhiTightFilter==1 && ntuple->FakeJetFilter==1 && HEMVeto;	
 }
 
 template<typename ntupleType> bool AK8MultCut(ntupleType* ntuple){
@@ -1093,7 +1103,7 @@ float dRMin=999999.;
 TString sample = ntuple->fChain->GetFile()->GetName();
 double BTagDiscrimCut=0.4941;
 if(sample.Contains("data2018"))BTagDiscrimCut=0.4184;
-if(sample.Contains("data") && !sample.Contains("2017") && !sample.Contains("2018"))BTagDiscrimCut=0.6324;
+if(sample.Contains("data") && !sample.Contains("2017") && !sample.Contains("2018"))BTagDiscrimCut=0.6321;
 	for(unsigned int j=0; j<ntuple->Jets->size(); ++j){
 		//if(ntuple->Jets_bDiscriminatorCSV->at(j)<  0.8484  )continue;
 		if(ntuple->Jets_bJetTagDeepCSVBvsAll->at(j)<  BTagDiscrimCut  )continue;
@@ -1135,7 +1145,6 @@ template<typename ntupleType> bool singleMuBaselineCut(ntupleType* ntuple){
            DeltaPhiCuts(ntuple) && 
            FiltersCut(ntuple) &&
            ntuple->JetID == 1 && singleMuCut(ntuple));
-
     
 }
 
@@ -1146,6 +1155,13 @@ template<typename ntupleType> bool singleEleCut(ntupleType* ntuple){
 		) ;
 }
 template<typename ntupleType> bool singleEleBaselineCut(ntupleType* ntuple){
+/*
+    bool HEMVeto=true;
+    TString sample = ntuple->fChain->GetFile()->GetName();
+    if(sample.Contains("2018")){
+    HEMVeto=ntuple->HEMDPhiVetoFilter;
+ }
+*/
 
   return ( ntuple->MET > 100.             &&
            ntuple->HT > 500.                         &&
