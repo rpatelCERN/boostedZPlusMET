@@ -29,11 +29,12 @@ int main(int argc, char** argv){
     options.opts->parse(argc, argv);
 
     reg = static_cast<skimSamples::region>(reg_);
-    
+    TString Era(argv[2]);
+    //std::cout<<"era "<<int(argv[1])<<std::endl;
     gROOT->ProcessLine(".L tdrstyle.C");
     gROOT->ProcessLine("setTDRStyle()");
     
-    skimSamples* skims_ = new skimSamples(reg);
+    skimSamples* skims_ = new skimSamples(reg,Era);
 
     typedef bool(*cuts)(RA2bTree*);
     vector<cuts> baselineCuts;
@@ -89,7 +90,8 @@ int main(int argc, char** argv){
     // background MC samples - 0 lepton regions
    for( int iSample = 0 ; iSample < skims.ntuples.size() ; iSample++){
    ///for( int iSample = 0 ; iSample < 0 ; iSample++){
-        RA2bTree* ntuple = skims.ntuples[iSample];
+// if(skims.sampleName[iSample]!="data" && skims.sampleName[iSample]!="data2017" && skims.sampleName[iSample]!="data2018" )continue; 
+       RA2bTree* ntuple = skims.ntuples[iSample];
  	//TTree*newtree=(TTree*)ntuple->fChain->CloneTree(0);
  	TTree*newtree=new TTree("newtree","");//(TTree*)ntuple->fChain->CloneTree(0);
 	int BTags;	
@@ -147,7 +149,9 @@ int main(int argc, char** argv){
 	    }
 	    double prefireweight=1.0;
 	    if( filename.Contains("2017") && !( skims.sampleName[iSample].Contains("data")))prefireweight=ntuple->NonPrefiringProb;
-	    
+	    if(filename.Contains("2016"))lumi=35922.;
+	    if(filename.Contains("2017"))lumi=41529.;
+	    if(filename.Contains("2018"))lumi=59740.;
 	    weight = ntuple->Weight*lumi*prefireweight;//*trigWeight;//*customPUweights(ntuple)*trigWeight;
 	    //weight = ntuple->Weight *lumi*trigWeight*customPUweights(ntuple);    
 	    //std::cout<<"Weight "<<ntuple->Weight<<std::endl;
@@ -195,7 +199,6 @@ int main(int argc, char** argv){
 	newtree->Write(skims.sampleName[iSample]);
 	  
   }// end sample loop
-
 if(reg == skimSamples::kSignal ){
     for( int iSample = 0 ; iSample < skims.signalNtuples.size() ; iSample++){
 

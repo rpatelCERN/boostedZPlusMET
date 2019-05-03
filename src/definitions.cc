@@ -1006,7 +1006,7 @@ template<typename ntupleType> bool ptBinCut(double pt , int ithBin){
 template<typename ntupleType> bool FiltersCut(ntupleType* ntuple){
     bool HEMVeto=true;
     TString sample = ntuple->fChain->GetFile()->GetName();
-    if(sample.Contains("2018")){
+    if(sample.Contains("2018C") || sample.Contains("2018D")){
 	HEMVeto=ntuple->HEMDPhiVetoFilter;
     	for(unsigned int e=0; e<ntuple->Electrons->size();++e){
 		if(ntuple->Electrons->at(e).Pt()<30)continue;

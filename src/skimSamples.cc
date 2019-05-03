@@ -25,17 +25,18 @@ public :
     std::vector<int> fillColor, lineColor, sigLineColor;
 
     enum region {kSignal,kSLm,kSLe,kLowDphi,kPhoton,kNumRegions};
+//    enum eras {2016,2017,2018,3};
     TString regionNames[kNumRegions]={"signal","SLm","SLe","kLowDphi","photon"};
 
     TString skimType;
     TString skimTypeMC;
 
-    skimSamples(region r=kSignal){
+    skimSamples(region r=kSignal, TString Era="MC2016"){
 
         skimType="";
 
         if( r == kSignal ){
-            skimType=BASE_DIR+"tree_signal/";
+            skimType=BASE_DIR+"/tree_signalUnblind/";
             skimTypeMC=BASE_DIRMC+"tree_signal/";
         }
         if( r == kPhoton ){
@@ -59,24 +60,24 @@ public :
         ///////////////////////////////////////////////////////////////////////
 //ONLY DATA IS AVAILABLE FOR NOW!!
         std::vector<TString> OtherFileNames;
-        OtherFileNames.push_back("tree_WWTo1L1Nu2Q_MC2017.root");
-        OtherFileNames.push_back("tree_WWTo2L2Nu_MC2017.root");
-        OtherFileNames.push_back("tree_WWZ_MC2017.root");
-        OtherFileNames.push_back("tree_WZTo1L1Nu2Q_MC2017.root");
-        OtherFileNames.push_back("tree_WZTo1L3Nu_MC2017.root");
-        OtherFileNames.push_back("tree_WZZ_MC2017.root");
-        OtherFileNames.push_back("tree_ZZTo2L2Q_MC2017.root");
-        OtherFileNames.push_back("tree_ZZTo2Q2Nu_MC2017.root");
-        OtherFileNames.push_back("tree_ZZZ_MC2017.root");
-        OtherFileNames.push_back("tree_TTTT_MC2017.root");
-        OtherFileNames.push_back("tree_TTWJetsToLNu_MC2017.root");
-        OtherFileNames.push_back("tree_TTWJetsToQQ_MC2017.root");
-        OtherFileNames.push_back("tree_TTGJets_MC2017.root");
-        OtherFileNames.push_back("tree_TTZToLLNuNu_MC2017.root");
-        OtherFileNames.push_back("tree_TTZToQQ_MC2017.root");
+        OtherFileNames.push_back("tree_WWTo1L1Nu2Q_");
+        OtherFileNames.push_back("tree_WWTo2L2Nu_");
+        OtherFileNames.push_back("tree_WWZ_");
+        OtherFileNames.push_back("tree_WZTo1L1Nu2Q_");
+        OtherFileNames.push_back("tree_WZTo1L3Nu_");
+        OtherFileNames.push_back("tree_WZZ_");
+        OtherFileNames.push_back("tree_ZZTo2L2Q_");
+        OtherFileNames.push_back("tree_ZZTo2Q2Nu_");
+        OtherFileNames.push_back("tree_ZZZ_");
+        OtherFileNames.push_back("tree_TTTT_");
+        OtherFileNames.push_back("tree_TTWJetsToLNu_");
+        OtherFileNames.push_back("tree_TTWJetsToQQ_");
+        OtherFileNames.push_back("tree_TTGJets_");
+        OtherFileNames.push_back("tree_TTZToLLNuNu_");
+        OtherFileNames.push_back("tree_TTZToQQ_");
         Other = new TChain("tree");
         for( int i = 0 ; i < OtherFileNames.size() ; i++ ){
-            Other->Add(skimTypeMC+"/"+OtherFileNames[i]);
+            Other->Add(skimTypeMC+"/"+OtherFileNames[i]+Era+".root");
         }
         if( r == kSignal || r == kSLm || r == kSLe || r == kLowDphi || r == kPhoton ){
             ntuples.push_back(new RA2bTree(Other));
@@ -86,16 +87,16 @@ public :
         }
 
         std::vector<TString> ZJetsFileNames;
-        ZJetsFileNames.push_back("tree_ZJetsToNuNu_HT-100to200_MC2017.root");
-        ZJetsFileNames.push_back("tree_ZJetsToNuNu_HT-200to400_MC2017.root");
-        ZJetsFileNames.push_back("tree_ZJetsToNuNu_HT-400to600_MC2017.root");
-        ZJetsFileNames.push_back("tree_ZJetsToNuNu_HT-600to800_MC2017.root");
-        ZJetsFileNames.push_back("tree_ZJetsToNuNu_HT-800to1200_MC2017.root");
-        ZJetsFileNames.push_back("tree_ZJetsToNuNu_HT-1200to2500_MC2017.root");
-        ZJetsFileNames.push_back("tree_ZJetsToNuNu_HT-2500toInf_MC2017.root");
+        ZJetsFileNames.push_back("tree_ZJetsToNuNu_HT-100to200_");
+        ZJetsFileNames.push_back("tree_ZJetsToNuNu_HT-200to400_");
+        ZJetsFileNames.push_back("tree_ZJetsToNuNu_HT-400to600_");
+        ZJetsFileNames.push_back("tree_ZJetsToNuNu_HT-600to800_");
+        ZJetsFileNames.push_back("tree_ZJetsToNuNu_HT-800to1200_");
+        ZJetsFileNames.push_back("tree_ZJetsToNuNu_HT-1200to2500_");
+        ZJetsFileNames.push_back("tree_ZJetsToNuNu_HT-2500toInf_");
         ZJets = new TChain("tree");
         for( int i = 0 ; i < ZJetsFileNames.size() ; i++ ){
-            ZJets->Add(skimTypeMC+"/"+ZJetsFileNames[i]);
+            ZJets->Add(skimTypeMC+"/"+ZJetsFileNames[i]+Era+".root");
         }
         if( r == kSignal || r == kLowDphi ){ 
             ntuples.push_back(new RA2bTree(ZJets));
@@ -105,16 +106,16 @@ public :
         }
 
         std::vector<TString> WJetsFileNames;
-        WJetsFileNames.push_back("tree_WJetsToLNu_HT-100to200_MC2017.root");
-        WJetsFileNames.push_back("tree_WJetsToLNu_HT-1200to2500_MC2017.root");
-        WJetsFileNames.push_back("tree_WJetsToLNu_HT-200to400_MC2017.root");
-        WJetsFileNames.push_back("tree_WJetsToLNu_HT-2500toInf_MC2017.root");
-        WJetsFileNames.push_back("tree_WJetsToLNu_HT-400to600_MC2017.root");
-        WJetsFileNames.push_back("tree_WJetsToLNu_HT-600to800_MC2017.root");
-        WJetsFileNames.push_back("tree_WJetsToLNu_HT-800to1200_MC2017.root");
+        WJetsFileNames.push_back("tree_WJetsToLNu_HT-100to200_");
+        WJetsFileNames.push_back("tree_WJetsToLNu_HT-1200to2500_");
+        WJetsFileNames.push_back("tree_WJetsToLNu_HT-200to400_");
+        WJetsFileNames.push_back("tree_WJetsToLNu_HT-2500toInf_");
+        WJetsFileNames.push_back("tree_WJetsToLNu_HT-400to600_");
+        WJetsFileNames.push_back("tree_WJetsToLNu_HT-600to800_");
+        WJetsFileNames.push_back("tree_WJetsToLNu_HT-800to1200_");
         WJets = new TChain("tree");
         for( int i = 0 ; i < WJetsFileNames.size() ; i++ ){
-            WJets->Add(skimTypeMC+"/"+WJetsFileNames[i]);
+            WJets->Add(skimTypeMC+"/"+WJetsFileNames[i]+Era+".root");
         }
         if( r == kSignal || r == kSLm || r == kSLe || r == kLowDphi ){
             ntuples.push_back(new RA2bTree(WJets));
@@ -124,14 +125,14 @@ public :
         }
 
         std::vector<TString> SnglTFileNames;
-        SnglTFileNames.push_back("tree_ST_s-channel_MC2017.root");
-        SnglTFileNames.push_back("tree_ST_t-channel_antitop_MC2017.root");
-        SnglTFileNames.push_back("tree_ST_t-channel_top_MC2017.root");
-        SnglTFileNames.push_back("tree_ST_tW_antitop_MC2017.root");
-        SnglTFileNames.push_back("tree_ST_tW_top_MC2017.root");
+        SnglTFileNames.push_back("tree_ST_s-channel_");
+        SnglTFileNames.push_back("tree_ST_t-channel_antitop_");
+        SnglTFileNames.push_back("tree_ST_t-channel_top_");
+        SnglTFileNames.push_back("tree_ST_tW_antitop_");
+        SnglTFileNames.push_back("tree_ST_tW_top_");
         SnglT = new TChain("tree");
         for( int i = 0 ; i < SnglTFileNames.size() ; i++ ) {
-            SnglT->Add(skimTypeMC+"/"+SnglTFileNames[i]);
+            SnglT->Add(skimTypeMC+"/"+SnglTFileNames[i]+Era+".root");
         }
         if( r == kSignal || r == kSLm || r == kSLe ){
             ntuples.push_back(new RA2bTree(SnglT));
@@ -141,23 +142,23 @@ public :
         }
 
         std::vector<TString> TTincFileNames;
-        TTincFileNames.push_back("tree_TTJets_MC2017.root");
+        TTincFileNames.push_back("tree_TTJets_");
         TTinc = new TChain("tree");
         for( int i = 0 ; i < TTincFileNames.size() ; i++ ){
-            TTinc->Add(skimTypeMC+"/"+TTincFileNames[i]);
+            TTinc->Add(skimTypeMC+"/"+TTincFileNames[i]+Era+".root");
         }
 
         std::vector<TString> TTFileNames;
-        TTFileNames.push_back("tree_TTJets_HT-600to800_MC2017.root");
-        TTFileNames.push_back("tree_TTJets_HT-800to1200_MC2017.root");
-        TTFileNames.push_back("tree_TTJets_HT-1200to2500_MC2017.root");
-        TTFileNames.push_back("tree_TTJets_HT-2500toInf_MC2017.root");
-        TTFileNames.push_back("tree_TTJets_SingleLeptFromT_MC2017.root");
-        TTFileNames.push_back("tree_TTJets_SingleLeptFromTbar_MC2017.root");
-        TTFileNames.push_back("tree_TTJets_DiLept_MC2017.root");        
+        TTFileNames.push_back("tree_TTJets_HT-600to800_");
+        TTFileNames.push_back("tree_TTJets_HT-800to1200_");
+        TTFileNames.push_back("tree_TTJets_HT-1200to2500_");
+        TTFileNames.push_back("tree_TTJets_HT-2500toInf_");
+        TTFileNames.push_back("tree_TTJets_SingleLeptFromT_");
+        TTFileNames.push_back("tree_TTJets_SingleLeptFromTbar_");
+        TTFileNames.push_back("tree_TTJets_DiLept_");        
         TT = new TChain("tree");
         for( int i = 0 ; i < TTFileNames.size() ; i++ ){
-            TT->Add(skimTypeMC+"/"+TTFileNames[i]);
+            TT->Add(skimTypeMC+"/"+TTFileNames[i]+Era+".root");
         }
         if( r == kSignal || r == kSLm || r == kSLe || r == kLowDphi ){
             ntuples.push_back(new RA2bTree(TT));
@@ -167,13 +168,13 @@ public :
         }
 
         std::vector<TString> DYFileNames;
-        DYFileNames.push_back("tree_DYJetsToLL_M-50_HT-100to200_MC2017.root");
-        DYFileNames.push_back("tree_DYJetsToLL_M-50_HT-200to400_MC2017.root");
-        DYFileNames.push_back("tree_DYJetsToLL_M-50_HT-400to600_MC2017.root");
-        DYFileNames.push_back("tree_DYJetsToLL_M-50_HT-600toInf_MC2017.root");
+        DYFileNames.push_back("tree_DYJetsToLL_M-50_HT-100to200_");
+        DYFileNames.push_back("tree_DYJetsToLL_M-50_HT-200to400_");
+        DYFileNames.push_back("tree_DYJetsToLL_M-50_HT-400to600_");
+        DYFileNames.push_back("tree_DYJetsToLL_M-50_HT-600toInf_");
         DY = new TChain("tree");
         for( int i = 0 ; i < DYFileNames.size() ; i++ ){
-            DY->Add(skimTypeMC+"/"+DYFileNames[i]);
+            DY->Add(skimTypeMC+"/"+DYFileNames[i]+Era+".root");
             //DY->Add(skimTypeLDP+"/"+DYFileNames[i]);
         }
         //ntuples.push_back(new RA2bTree(DY));
@@ -182,13 +183,13 @@ public :
         //lineColor.push_back(1);
 
         std::vector<TString> GJets0p4FileNames;
-        GJets0p4FileNames.push_back("tree_GJets_DR-0p4_HT-100to200_MC2017.root");
-        GJets0p4FileNames.push_back("tree_GJets_DR-0p4_HT-200to400_MC2017.root");
-        GJets0p4FileNames.push_back("tree_GJets_DR-0p4_HT-400to600_MC2017.root");
-        GJets0p4FileNames.push_back("tree_GJets_DR-0p4_HT-600toInf_MC2017.root");
+        GJets0p4FileNames.push_back("tree_GJets_DR-0p4_HT-100to200_");
+        GJets0p4FileNames.push_back("tree_GJets_DR-0p4_HT-200to400_");
+        GJets0p4FileNames.push_back("tree_GJets_DR-0p4_HT-400to600_");
+        GJets0p4FileNames.push_back("tree_GJets_DR-0p4_HT-600toInf_");
         GJets0p4 = new TChain("tree");
         for( int i = 0 ; i < GJets0p4FileNames.size() ; i++ ){
-            GJets0p4->Add(skimTypeMC+"/"+GJets0p4FileNames[i]);
+            GJets0p4->Add(skimTypeMC+"/"+GJets0p4FileNames[i]+Era+".root");
         }
         if( r == kPhoton ){
             ntuples.push_back(new RA2bTree(GJets0p4));
@@ -197,26 +198,17 @@ public :
             lineColor.push_back(1);
         }
 
-        std::vector<TString> GJetsFileNames;
-        GJetsFileNames.push_back("tree_GJets_HT-100to200_MC2017.root");
-        GJetsFileNames.push_back("tree_GJets_HT-200to400_MC2017.root");
-        GJetsFileNames.push_back("tree_GJets_HT-400to600_MC2017.root");
-        GJetsFileNames.push_back("tree_GJets_HT-600toInf_MC2017.root");
-        GJets = new TChain("tree");
-        for( int i = 0 ; i < GJetsFileNames.size() ; i++ ){
-            GJets->Add(skimTypeMC+"/"+GJetsFileNames[i]);
-        }
         std::vector<TString> QCDFileNames;
-        QCDFileNames.push_back("tree_QCD_HT-200to300_MC2017.root");
-        QCDFileNames.push_back("tree_QCD_HT-300to500_MC2017.root");
-        QCDFileNames.push_back("tree_QCD_HT-500to700_MC2017.root");
-        QCDFileNames.push_back("tree_QCD_HT-700to1000_MC2017.root");
-        QCDFileNames.push_back("tree_QCD_HT-1000to1500_MC2017.root");
-        QCDFileNames.push_back("tree_QCD_HT-1500to2000_MC2017.root");
-        QCDFileNames.push_back("tree_QCD_HT-2000toInf_MC2017.root");
+        QCDFileNames.push_back("tree_QCD_HT-200to300_");
+        QCDFileNames.push_back("tree_QCD_HT-300to500_");
+        QCDFileNames.push_back("tree_QCD_HT-500to700_");
+        QCDFileNames.push_back("tree_QCD_HT-700to1000_");
+        QCDFileNames.push_back("tree_QCD_HT-1000to1500_");
+        QCDFileNames.push_back("tree_QCD_HT-1500to2000_");
+        QCDFileNames.push_back("tree_QCD_HT-2000toInf_");
         QCD = new TChain("tree");
         for( int i = 0 ; i < QCDFileNames.size() ; i++ ){
-            QCD->Add(skimTypeMC+"/"+QCDFileNames[i]);
+            QCD->Add(skimTypeMC+"/"+QCDFileNames[i]+Era+".root");
         }
         if( r == kSignal || r == kPhoton || r == kLowDphi ){
             ntuples.push_back(new RA2bTree(QCD));
@@ -462,20 +454,19 @@ public :
         std::vector<TString> T5HH1900FilesNames;
         std::vector<TString> T5HH2000FilesNames;
         std::vector<TString> T5HH2100FilesNames;
-
-	T5HH750FilesNames.push_back("root://cmseos.fnal.gov//store/user/rgp230/SUSY/T5ZH/RA2ProductionV16/tree_T5qqqqZH_750_MC2016.root");
-	T5HH1000FilesNames.push_back("root://cmseos.fnal.gov//store/user/rgp230/SUSY/T5ZH/RA2ProductionV16/tree_T5qqqqZH_1000_MC2016.root");
-	T5HH1100FilesNames.push_back("root://cmseos.fnal.gov//store/user/rgp230/SUSY/T5ZH/RA2ProductionV16/tree_T5qqqqZH_1100_MC2016.root");
-	T5HH1200FilesNames.push_back("root://cmseos.fnal.gov//store/user/rgp230/SUSY/T5ZH/RA2ProductionV16/tree_T5qqqqZH_1200_MC2016.root");
-	T5HH1300FilesNames.push_back("root://cmseos.fnal.gov//store/user/rgp230/SUSY/T5ZH/RA2ProductionV16/tree_T5qqqqZH_1300_MC2016.root");
-	T5HH1400FilesNames.push_back("root://cmseos.fnal.gov//store/user/rgp230/SUSY/T5ZH/RA2ProductionV16/tree_T5qqqqZH_1400_MC2016.root");
-	T5HH1500FilesNames.push_back("root://cmseos.fnal.gov//store/user/rgp230/SUSY/T5ZH/RA2ProductionV16/tree_T5qqqqZH_1500_MC2016.root");
-	T5HH1600FilesNames.push_back("root://cmseos.fnal.gov//store/user/rgp230/SUSY/T5ZH/RA2ProductionV16/tree_T5qqqqZH_1600_MC2016.root");
-	T5HH1700FilesNames.push_back("root://cmseos.fnal.gov//store/user/rgp230/SUSY/T5ZH/RA2ProductionV16/tree_T5qqqqZH_1700_MC2016.root");
-	T5HH1800FilesNames.push_back("root://cmseos.fnal.gov//store/user/rgp230/SUSY/T5ZH/RA2ProductionV16/tree_T5qqqqZH_1800_MC2016.root");
-	T5HH1900FilesNames.push_back("root://cmseos.fnal.gov//store/user/rgp230/SUSY/T5ZH/RA2ProductionV16/tree_T5qqqqZH_1900_MC2016.root");
-	T5HH2000FilesNames.push_back("root://cmseos.fnal.gov//store/user/rgp230/SUSY/T5ZH/RA2ProductionV16/tree_T5qqqqZH_2000_MC2016.root");
-	T5HH2100FilesNames.push_back("root://cmseos.fnal.gov//store/user/rgp230/SUSY/T5ZH/RA2ProductionV16/tree_T5qqqqZH_2100_MC2016.root");
+	T5HH750FilesNames.push_back("root://cmseos.fnal.gov//store/user/rgp230/SUSY/BooostedZSkims/tree_signal/tree_T5qqqqZH_750_MC2016.root");
+	T5HH1000FilesNames.push_back("root://cmseos.fnal.gov//store/user/rgp230/SUSY/BooostedZSkims/tree_signal/RA2ProductionV16/tree_T5qqqqZH_1000_MC2016.root");
+	T5HH1100FilesNames.push_back("root://cmseos.fnal.gov//store/user/rgp230/SUSY/BooostedZSkims/tree_signal/RA2ProductionV16/tree_T5qqqqZH_1100_MC2016.root");
+	T5HH1200FilesNames.push_back("root://cmseos.fnal.gov//store/user/rgp230/SUSY/BooostedZSkims/tree_signal/RA2ProductionV16/tree_T5qqqqZH_1200_MC2016.root");
+	T5HH1300FilesNames.push_back("root://cmseos.fnal.gov//store/user/rgp230/SUSY/BooostedZSkims/tree_signal/RA2ProductionV16/tree_T5qqqqZH_1300_MC2016.root");
+	T5HH1400FilesNames.push_back("root://cmseos.fnal.gov//store/user/rgp230/SUSY/BooostedZSkims/tree_signal/RA2ProductionV16/tree_T5qqqqZH_1400_MC2016.root");
+	T5HH1500FilesNames.push_back("root://cmseos.fnal.gov//store/user/rgp230/SUSY/BooostedZSkims/tree_signal/RA2ProductionV16/tree_T5qqqqZH_1500_MC2016.root");
+	T5HH1600FilesNames.push_back("root://cmseos.fnal.gov//store/user/rgp230/SUSY/BooostedZSkims/tree_signal/RA2ProductionV16/tree_T5qqqqZH_1600_MC2016.root");
+	T5HH1700FilesNames.push_back("root://cmseos.fnal.gov//store/user/rgp230/SUSY/BooostedZSkims/tree_signal/RA2ProductionV16/tree_T5qqqqZH_1700_MC2016.root");
+	T5HH1800FilesNames.push_back("root://cmseos.fnal.gov//store/user/rgp230/SUSY/BooostedZSkims/tree_signal/RA2ProductionV16/tree_T5qqqqZH_1800_MC2016.root");
+	T5HH1900FilesNames.push_back("root://cmseos.fnal.gov//store/user/rgp230/SUSY/BooostedZSkims/tree_signal/RA2ProductionV16/tree_T5qqqqZH_1900_MC2016.root");
+	T5HH2000FilesNames.push_back("root://cmseos.fnal.gov//store/user/rgp230/SUSY/BooostedZSkims/tree_signal/RA2ProductionV16/tree_T5qqqqZH_2000_MC2016.root");
+	T5HH2100FilesNames.push_back("root://cmseos.fnal.gov//store/user/rgp230/SUSY/BooostedZSkims/tree_signal/RA2ProductionV16/tree_T5qqqqZH_2100_MC2016.root");
 
 	/*
         for(unsigned int i=0; i<14; ++i)T5HH750FilesNames.push_back(TString::Format("root://cmseos.fnal.gov//store/user/fojensen/T5qqqqZHProduction_21022018/Summer16.SMS-T5qqqqZH-mGluino750_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_%d_RA2AnalysisTree.root",i));
