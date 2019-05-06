@@ -52,7 +52,7 @@ template<typename ntupleType>void ntupleBranchStatus(ntupleType* ntuple){
   ntuple->fChain->SetBranchStatus("BTags",1);
   ntuple->fChain->SetBranchStatus("MET",1);
   ntuple->fChain->SetBranchStatus("MHT",1);
-  ntuple->fChain->SetBranchStatus("METPhi",1);
+ntuple->fChain->SetBranchStatus("METPhi",1);
 
   ntuple->fChain->SetBranchStatus("HTclean",1);
   ntuple->fChain->SetBranchStatus("NJetsclean",1);
@@ -76,6 +76,7 @@ template<typename ntupleType>void ntupleBranchStatus(ntupleType* ntuple){
   ntuple->fChain->SetBranchStatus("BadPFMuonFilter",1);
   ntuple->fChain->SetBranchStatus("BadChargedCandidateFilter",1);
   ntuple->fChain->SetBranchStatus("CaloMET",1);
+  ntuple->fChain->SetBranchStatus("HEMDPhiVetoFilter",1); 
   ntuple->fChain->SetBranchStatus("NVtx",1);
   ntuple->fChain->SetBranchStatus("NumInteractions",1);
   ntuple->fChain->SetBranchStatus("nAllVertices",1);
@@ -85,8 +86,10 @@ template<typename ntupleType>void ntupleBranchStatus(ntupleType* ntuple){
   ntuple->fChain->SetBranchStatus("madMinDeltaRStatus",1);
   ntuple->fChain->SetBranchStatus("madMinPhotonDeltaR",1);
   ntuple->fChain->SetBranchStatus("LowNeutralJetFilter",1);
+  ntuple->fChain->SetBranchStatus("EcalNoiseJetFilter",1);
   ntuple->fChain->SetBranchStatus("HTRatioDPhiTightFilter",1);
   ntuple->fChain->SetBranchStatus("FakeJetFilter",1);
+  ntuple->fChain->SetBranchStatus("*Filter",1);
   ntuple->fChain->SetBranchStatus("GenParticles*",1);
 }
 
@@ -1006,13 +1009,15 @@ template<typename ntupleType> bool ptBinCut(double pt , int ithBin){
 template<typename ntupleType> bool FiltersCut(ntupleType* ntuple){
     bool HEMVeto=true;
     TString sample = ntuple->fChain->GetFile()->GetName();
-    if(sample.Contains("2018C") || sample.Contains("2018D")){
+    if(sample.Contains("2018C") || sample.Contains("2018D") || sample.Contains("MC2018")){
 	HEMVeto=ntuple->HEMDPhiVetoFilter;
     	for(unsigned int e=0; e<ntuple->Electrons->size();++e){
 		if(ntuple->Electrons->at(e).Pt()<30)continue;
 		if(ntuple->Electrons->at(e).Eta()>-3.0 && ntuple->Electrons->at(e).Eta()<-1.4 && ntuple->Electrons->at(e).Phi()>-1.57 && ntuple->Electrons->at(e).Phi()<-0.67)HEMVeto=false;
        }
     }
+   bool NoiseJetFilter=true;
+   if(sample.Contains("2017"))NoiseJetFilter=ntuple->EcalNoiseJetFilter;
     return ntuple->HBHENoiseFilter==1 && 
         ntuple->HBHEIsoNoiseFilter==1 && 
         ntuple->eeBadScFilter==1 && 
@@ -1020,8 +1025,9 @@ template<typename ntupleType> bool FiltersCut(ntupleType* ntuple){
         ntuple->NVtx>0 && 
         ntuple->MET/ntuple->CaloMET < 5. &&
         ntuple->BadPFMuonFilter == 1 &&
-        ntuple->BadChargedCandidateFilter == 1  && ntuple->globalSuperTightHalo2016Filter==1 &&
-        ntuple->LowNeutralJetFilter==1 && ntuple->HTRatioDPhiTightFilter==1 && ntuple->FakeJetFilter==1 && HEMVeto;	
+        ntuple->BadChargedCandidateFilter == 1  
+        && ntuple->globalSuperTightHalo2016Filter==1 &&
+        ntuple->LowNeutralJetFilter==1 && ntuple->HTRatioDPhiTightFilter==1 && ntuple->FakeJetFilter==1 && HEMVeto && NoiseJetFilter;	
 }
 
 template<typename ntupleType> bool AK8MultCut(ntupleType* ntuple){

@@ -22,7 +22,7 @@ using namespace std;
 int main(int argc, char** argv){
 
     skimSamples::region reg;
-    int reg_(0);
+    int reg_(4);
     bool looseCuts(false);
     defaultOptions options(argv[0],"");
     options.opts->add_options()("l,loose_cuts","apply loose jet pt cuts",cxxopts::value<bool>(looseCuts))("r,region","region to analyze",cxxopts::value<int>(reg_));
@@ -79,14 +79,14 @@ int main(int argc, char** argv){
     if( looseCuts )
         cutName="_looseCuts";
     if( reg == skimSamples::kSignal )
-        regionName="";
+        regionName="Signal";
     if( reg == skimSamples::kSLm )
         regionName="_singleMu";
     if( reg == skimSamples::kSLe )
         regionName="_singleEle";
     if( reg == skimSamples::kLowDphi )
         regionName="_lowDphi";
-    outputFile = new TFile("SkimFileMass"+cutName+regionName+".root","RECREATE");
+    outputFile = new TFile("SkimFileMass"+cutName+regionName+Era+".root","RECREATE");
     // background MC samples - 0 lepton regions
    for( int iSample = 0 ; iSample < skims.ntuples.size() ; iSample++){
    ///for( int iSample = 0 ; iSample < 0 ; iSample++){
@@ -96,6 +96,7 @@ int main(int argc, char** argv){
  	TTree*newtree=new TTree("newtree","");//(TTree*)ntuple->fChain->CloneTree(0);
 	int BTags;	
         double MET,HT,Weight,JetPt1, JetPt2,PrunedMass1, PrunedMass2, Jet1_tau2overtau1, Jet2_tau2overtau1;
+	double JetEta1,JetEta2;
         //TBranch*b_BTags, *b_Weight,*b_MET,*b_HT,*b_JetPt1, *b_JetPt2,*b_PrunedMass1, *b_PrunedMass2, *b_Jet1_tau2overtau1, *b_Jet2_tau2overtau1, *b_GenHadTau;
     	int WMatchedJet1, WMatchedJet2;
 	int GenHadTau=0;
@@ -104,6 +105,8 @@ int main(int argc, char** argv){
         newtree->Branch("WMatchedJet2", &WMatchedJet2, "WMatchedJet2/I");	
         newtree->Branch("JetPt1", &JetPt1, "JetPt1/D");	
         newtree->Branch("JetPt2", &JetPt2, "JetPt2/D");	
+        newtree->Branch("JetEta1", &JetEta1, "JetEta1/D");	
+        newtree->Branch("JetEta2", &JetEta2, "JetEta2/D");	
         newtree->Branch("PrunedMass1", &PrunedMass1, "PrunedMass1/D");	
         newtree->Branch("PrunedMass2", &PrunedMass2, "PrunedMass2/D");	
         newtree->Branch("Jet1_tau2overtau1", &Jet1_tau2overtau1, "Jet1_tau2overtau1/D");	
@@ -162,11 +165,13 @@ int main(int argc, char** argv){
 	    nAK8=ntuple->JetsAK8->size();
 	    if(nAK8>0){
             JetPt1=ntuple->JetsAK8->at(0).Pt();  
+            JetEta1=ntuple->JetsAK8->at(0).Eta();  
 	    PrunedMass1=ntuple->JetsAK8_softDropMass->at(0);
 	   Jet1_tau2overtau1=ntuple->JetsAK8_NsubjettinessTau2->at(0)/ntuple->JetsAK8_NsubjettinessTau1->at(0);
 	   }
 	    if(nAK8>1){
             JetPt2=ntuple->JetsAK8->at(1).Pt();
+            JetEta2=ntuple->JetsAK8->at(1).Eta();
 	    PrunedMass2=ntuple->JetsAK8_softDropMass->at(1);
 	    Jet2_tau2overtau1=ntuple->JetsAK8_NsubjettinessTau2->at(1)/ntuple->JetsAK8_NsubjettinessTau1->at(1);
 	    }
@@ -248,7 +253,13 @@ if(reg == skimSamples::kSignal ){
 		//std::cout<<"Here ZZ "<<std::endl;	
                 std::vector<double> EfficiencyCenterUpDown = Eff_MetMhtSextetReal_CenterUpDown(ntuple->HT, ntuple->MHT, ntuple->NJets);
                 trigWeight=EfficiencyCenterUpDown[0];
-	   weight=ntuple->Weight*lumi*trigWeight/0.25;
+	    if(Era=="MC2016")lumi=35922.;
+	    if(Era=="MC2017")lumi=41529.;
+	    if(Era=="MC2018")lumi=59740.;
+	    double prefireweight=1.0;
+	    if( Era=="MC2017")prefireweight=ntuple->NonPrefiringProb;
+
+	    weight=ntuple->Weight*lumi*prefireweight/0.25;
             Weight=weight;
 	    HT=ntuple->HT;
 	    MET=ntuple->MET;
