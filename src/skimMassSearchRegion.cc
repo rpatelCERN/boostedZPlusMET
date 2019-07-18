@@ -22,7 +22,7 @@ using namespace std;
 int main(int argc, char** argv){
 
     skimSamples::region reg;
-    int reg_(4);
+    int reg_(0);
     bool looseCuts(false);
     defaultOptions options(argv[0],"");
     options.opts->add_options()("l,loose_cuts","apply loose jet pt cuts",cxxopts::value<bool>(looseCuts))("r,region","region to analyze",cxxopts::value<int>(reg_));
@@ -91,12 +91,15 @@ int main(int argc, char** argv){
    for( int iSample = 0 ; iSample < skims.ntuples.size() ; iSample++){
    ///for( int iSample = 0 ; iSample < 0 ; iSample++){
 // if(skims.sampleName[iSample]!="data" && skims.sampleName[iSample]!="data2017" && skims.sampleName[iSample]!="data2018" )continue; 
+//	continue;
+	//if(skims.sampleName[iSample]!="ZJets")continue;
        RA2bTree* ntuple = skims.ntuples[iSample];
  	//TTree*newtree=(TTree*)ntuple->fChain->CloneTree(0);
  	TTree*newtree=new TTree("newtree","");//(TTree*)ntuple->fChain->CloneTree(0);
 	int BTags;	
         double MET,HT,Weight,JetPt1, JetPt2,PrunedMass1, PrunedMass2, Jet1_tau2overtau1, Jet2_tau2overtau1;
 	double JetEta1,JetEta2;
+	double DeltaRtoClosestB;
         //TBranch*b_BTags, *b_Weight,*b_MET,*b_HT,*b_JetPt1, *b_JetPt2,*b_PrunedMass1, *b_PrunedMass2, *b_Jet1_tau2overtau1, *b_Jet2_tau2overtau1, *b_GenHadTau;
     	int WMatchedJet1, WMatchedJet2;
 	int GenHadTau=0;
@@ -117,6 +120,7 @@ int main(int argc, char** argv){
 	newtree->Branch("HT", &HT, "HT/D");
         //newtree->SetBranchAddress("BTags",&BTags,&b_BTags);
         newtree->Branch("MET",&MET, "MET/D");
+        newtree->Branch("DeltaRtoClosestB", &DeltaRtoClosestB,"DeltaRtoClosestB/D");
         int numEvents = ntuple->fChain->GetEntries();
         ntupleBranchStatus<RA2bTree>(ntuple);
         int bin = -1;
@@ -125,8 +129,7 @@ int main(int argc, char** argv){
         bool passBaseline;
         double jetMass1,jetMass2;
         TString filename;
-	//if(skims.sampleName[iSample]!="TT")continue;
-        //cout << skims.sampleName[iSample]<<numEvents <<endl;
+        cout << skims.sampleName[iSample]<<numEvents <<endl;
     for( int iEvt = 0 ; iEvt < min(options.MAX_EVENTS,numEvents) ; iEvt++ ){
     //for( int iEvt = 0 ; iEvt < min(10,numEvents) ; iEvt++ ){
             ntuple->GetEntry(iEvt);
@@ -163,6 +166,7 @@ int main(int argc, char** argv){
 	    HT=ntuple->HT;
 	    BTags=ntuple->BTags;
 	    nAK8=ntuple->JetsAK8->size();
+	    DeltaRtoClosestB=dRtoClosestB(ntuple);
 	    if(nAK8>0){
             JetPt1=ntuple->JetsAK8->at(0).Pt();  
             JetEta1=ntuple->JetsAK8->at(0).Eta();  
@@ -174,6 +178,7 @@ int main(int argc, char** argv){
             JetEta2=ntuple->JetsAK8->at(1).Eta();
 	    PrunedMass2=ntuple->JetsAK8_softDropMass->at(1);
 	    Jet2_tau2overtau1=ntuple->JetsAK8_NsubjettinessTau2->at(1)/ntuple->JetsAK8_NsubjettinessTau1->at(1);
+	    
 	    }
 	    //std::cout<<"MET"<<MET<<std::endl;
 	WMatchedJet1=0;
@@ -206,7 +211,7 @@ int main(int argc, char** argv){
   }// end sample loop
 if(reg == skimSamples::kSignal ){
     for( int iSample = 0 ; iSample < skims.signalNtuples.size() ; iSample++){
-
+  
         RA2bTree* ntuple = skims.signalNtuples[iSample];
  	TTree*newtree=new TTree("newtree", "");//ntuple->fChain->CloneTree(0);
 	int BTags;	
@@ -215,6 +220,8 @@ if(reg == skimSamples::kSignal ){
     	int WMatchedJet1, WMatchedJet2;
 	int GenHadTau=0;
 	int nAK8=0;
+	double DeltaRtoClosestB;
+        double ZpT;
         newtree->Branch("WMatchedJet1", &WMatchedJet1, "WMatchedJet1/I");	
        newtree->Branch("WMatchedJet2", &WMatchedJet2, "WMatchedJet2/I");	
         newtree->Branch("JetPt1", &JetPt1, "JetPt1/D");	
@@ -227,9 +234,11 @@ if(reg == skimSamples::kSignal ){
         newtree->Branch("GenHadTau", &GenHadTau, "GenHadTau/I");
         newtree->Branch("nAK8", &nAK8, "nAK8/I");
 	newtree->Branch("HT", &HT, "HT/D");
+        newtree->Branch("DeltaRtoClosestB", &DeltaRtoClosestB,"DeltaRtoClosestB/D");
         //newtree->SetBranchAddress("BTags",&BTags,&b_BTags);
         newtree->Branch("MET",&MET, "MET/D");
-
+	newtree->Branch("ZpT", &ZpT, "ZpT/D");
+         
         //newtree->SetBranchAddress("BTags",&BTags,&b_BTags);
         //newtree->SetBranchAddress("MET",&MET, &b_MET);
         int numEvents = ntuple->fChain->GetEntries();
@@ -264,6 +273,7 @@ if(reg == skimSamples::kSignal ){
 	    HT=ntuple->HT;
 	    MET=ntuple->MET;
 	    BTags=ntuple->BTags;
+	    DeltaRtoClosestB=dRtoClosestB(ntuple);
 	    nAK8=ntuple->JetsAK8->size();
 	    if(nAK8>0){
             JetPt1=ntuple->JetsAK8->at(0).Pt();  
@@ -275,7 +285,18 @@ if(reg == skimSamples::kSignal ){
 	    PrunedMass2=ntuple->JetsAK8_softDropMass->at(1);
 	    Jet2_tau2overtau1=ntuple->JetsAK8_NsubjettinessTau2->at(1)/ntuple->JetsAK8_NsubjettinessTau1->at(1);
 	    }
-               newtree->Fill();
+	std::vector<unsigned int >ZBosonIndex;
+    	for( int i=0 ; i < ntuple->GenParticles->size() ; i++ ){
+        	if( ntuple->GenParticles_PdgId->at(i) == 23 &&
+        	    ntuple->GenParticles_ParentId->at(i) == 1000023 &&
+        	    ntuple->GenParticles_Status->at(i) == 22 )ZBosonIndex.push_back(i);
+		
+        	//    numZs++;
+    		} 
+	ZpT=ntuple->GenParticles->at(ZBosonIndex.at(0)).Pt();
+        if(ZpT>ntuple->GenParticles->at(ZBosonIndex.at(1)).Pt())ZpT=ntuple->GenParticles->at(ZBosonIndex.at(1)).Pt();
+        //std::cout<<"Z boson int "<<ntuple->GenParticles->at(ZBosonIndex.at(0)).Pt()<< " Mother " <<ntuple->GenParticles->at(ntuple->GenParticles_ParentIdx->at(ZBosonIndex.at(0))).Pt()<<std::endl;      
+        newtree->Fill();
 	}
         outputFile->cd();
         newtree->Write(skims.signalSampleName[iSample]);

@@ -346,7 +346,7 @@ public :
         if( r == kSLe ){
             data2018 = new TChain("tree");
             for( int i = 0 ; i < SingleElectronNames.size() ; i++ ){
-                data2017->Add(skimType+"/"+SingleElectronNames[i]);
+                data2018->Add(skimType+"/"+SingleElectronNames[i]);
 
             }
             dataNtuple2018 = new RA2bTree(data2018);

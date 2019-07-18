@@ -6,7 +6,7 @@ const double bbtagCut = 0.3;
 const double tau21Cut = 0.55;
 const double ZmassWindowLow = 70.;
 const double ZmassWindowHigh = 100.;
-const double baselineMassLow = 50.;
+const double baselineMassLow = 0.;
 const double baselineMassHigh = 200.;
 TFile* puWeightFile = new TFile("../data/PileupHistograms_0121_69p2mb_pm4p6.root");
 TH1F* puWeightHist = (TH1F*) puWeightFile->Get("pu_weights_down");
@@ -1086,15 +1086,15 @@ template<typename ntupleType> bool AK8JetLooseMassCut(ntupleType* ntuple){
 template<typename ntupleType> bool baselineCut(ntupleType* ntuple){
  
   return ( ntuple->MET > 300.             &&
-           ntuple->HT > 500.                         &&
+           ntuple->HT > 400.                         &&
            ntuple->JetsAK8->size() >1 &&
-	   ntuple->JetsAK8->at(0).Pt() > 300. && 
+	   ntuple->JetsAK8->at(0).Pt() > 200. && 
 	   ntuple->JetsAK8_softDropMass->at(0) > baselineMassLow &&
 	   ntuple->JetsAK8_softDropMass->at(0) < baselineMassHigh &&
            ntuple->JetsAK8->at(1).Pt() > 200. &&
            ntuple->JetsAK8_softDropMass->at(1) >baselineMassLow && 
            ntuple->JetsAK8_softDropMass->at(1) < baselineMassHigh
-	    &&
+	   &&
 	   dRtoClosestB(ntuple)>0.8	
 	   //dRtoClosestB(ntuple)>2.0
 	   &&
@@ -1142,7 +1142,7 @@ template<typename ntupleType> bool singleMuBaselineCut(ntupleType* ntuple){
   return ( ntuple->MET > 100.             &&
            ntuple->HT > 300.                         &&
            ntuple->JetsAK8->size() >1 &&
-	   ntuple->JetsAK8->at(0).Pt() > 300. && 
+	   ntuple->JetsAK8->at(0).Pt() > 200. && 
 	   ntuple->JetsAK8_softDropMass->at(0) > baselineMassLow &&
 	   ntuple->JetsAK8_softDropMass->at(0) < baselineMassHigh &&
 	   //if(ntuple->JetsAK8->size() > 1){
@@ -1173,9 +1173,9 @@ template<typename ntupleType> bool singleEleBaselineCut(ntupleType* ntuple){
 */
 
   return ( ntuple->MET > 100.             &&
-           ntuple->HT > 500.                         &&
+           ntuple->HT > 400.                         &&
            ntuple->JetsAK8->size() >1 &&
-	   ntuple->JetsAK8->at(0).Pt() > 300. && 
+	   ntuple->JetsAK8->at(0).Pt() > 200. && 
 	   ntuple->JetsAK8_softDropMass->at(0) > baselineMassLow &&
 	   ntuple->JetsAK8_softDropMass->at(0) < baselineMassHigh &&
 	   //if(ntuple->JetsAK8->size() > 1){
