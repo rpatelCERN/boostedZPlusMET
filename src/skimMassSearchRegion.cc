@@ -20,15 +20,20 @@
 using namespace std;
 
 int main(int argc, char** argv){
-
-    skimSamples::region reg;
     int reg_(0);
+    skimSamples::region reg;
+if( argc >= 2 ){
+        reg_ = atoi(argv[1]);
+std::cout<<"reg "<<reg_<<std::endl;
+}
     bool looseCuts(false);
+
     defaultOptions options(argv[0],"");
     options.opts->add_options()("l,loose_cuts","apply loose jet pt cuts",cxxopts::value<bool>(looseCuts))("r,region","region to analyze",cxxopts::value<int>(reg_));
     options.opts->parse(argc, argv);
 
     reg = static_cast<skimSamples::region>(reg_);
+    //int reg_(reg);
     TString Era(argv[2]);
     //std::cout<<"era "<<int(argv[1])<<std::endl;
     gROOT->ProcessLine(".L tdrstyle.C");
@@ -68,6 +73,14 @@ int main(int argc, char** argv){
             baselineCuts.push_back(*photonBaselineCut<RA2bTree>);
 		//std::cout<<"Single Photon "<<std::endl;
 	}
+	else if(reg==skimSamples::kDYm){
+            baselineCuts.push_back(*doubleMuBaselineCut<RA2bTree>);
+		//std::cout<<"Single Photon "<<std::endl;
+	}
+	else if(reg==skimSamples::kDYe){
+            baselineCuts.push_back(*doubleEleBaselineCut<RA2bTree>);
+		//std::cout<<"Single Photon "<<std::endl;
+	}
 	else
             assert(1);
     }
@@ -86,6 +99,9 @@ int main(int argc, char** argv){
         regionName="_singleEle";
     if( reg == skimSamples::kLowDphi )
         regionName="_lowDphi";
+    if(reg==skimSamples::kPhoton) regionName="_photon";
+    if(reg==skimSamples::kDYe) regionName="_DYe";
+    if(reg==skimSamples::kDYm) regionName="_DYm";
     outputFile = new TFile("SkimFileMass"+cutName+regionName+Era+".root","RECREATE");
     // background MC samples - 0 lepton regions
    for( int iSample = 0 ; iSample < skims.ntuples.size() ; iSample++){
@@ -170,13 +186,13 @@ int main(int argc, char** argv){
 	    if(nAK8>0){
             JetPt1=ntuple->JetsAK8->at(0).Pt();  
             JetEta1=ntuple->JetsAK8->at(0).Eta();  
-	    PrunedMass1=ntuple->JetsAK8_softDropMass->at(0);
+	    PrunedMass1=ntuple->JetsAK8_prunedMass->at(0);
 	   Jet1_tau2overtau1=ntuple->JetsAK8_NsubjettinessTau2->at(0)/ntuple->JetsAK8_NsubjettinessTau1->at(0);
 	   }
 	    if(nAK8>1){
             JetPt2=ntuple->JetsAK8->at(1).Pt();
             JetEta2=ntuple->JetsAK8->at(1).Eta();
-	    PrunedMass2=ntuple->JetsAK8_softDropMass->at(1);
+	    PrunedMass2=ntuple->JetsAK8_prunedMass->at(1);
 	    Jet2_tau2overtau1=ntuple->JetsAK8_NsubjettinessTau2->at(1)/ntuple->JetsAK8_NsubjettinessTau1->at(1);
 	    
 	    }

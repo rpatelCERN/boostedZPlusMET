@@ -6,8 +6,8 @@ const double bbtagCut = 0.3;
 const double tau21Cut = 0.55;
 const double ZmassWindowLow = 70.;
 const double ZmassWindowHigh = 100.;
-const double baselineMassLow = 0.;
-const double baselineMassHigh = 200.;
+const double baselineMassLow = 40.;
+const double baselineMassHigh = 140.;
 TFile* puWeightFile = new TFile("../data/PileupHistograms_0121_69p2mb_pm4p6.root");
 TH1F* puWeightHist = (TH1F*) puWeightFile->Get("pu_weights_down");
 // - - - - - - weights for WJets, GJets, - - - - - - - - 
@@ -1071,8 +1071,8 @@ template<typename ntupleType> bool METHTCut(ntupleType* ntuple){
 
 template<typename ntupleType> bool AK8JetPtCut(ntupleType* ntuple){
   return ( ntuple->JetsAK8->size() >= 2 &&
-           ntuple->JetsAK8->at(0).Pt() > 200. &&
-	   ntuple->JetsAK8->at(1).Pt() > 200. );
+           ntuple->JetsAK8->at(0).Pt() > 300. &&
+	   ntuple->JetsAK8->at(1).Pt() > 300. );
 }
 
 template<typename ntupleType> bool AK8JetLooseMassCut(ntupleType* ntuple){
@@ -1087,13 +1087,14 @@ template<typename ntupleType> bool baselineCut(ntupleType* ntuple){
  
   return ( ntuple->MET > 300.             &&
            ntuple->HT > 400.                         &&
-           ntuple->JetsAK8->size() >1 &&
+           ntuple->JetsAK8->size() >1 
+	    &&
 	   ntuple->JetsAK8->at(0).Pt() > 200. && 
-	   ntuple->JetsAK8_softDropMass->at(0) > baselineMassLow &&
-	   ntuple->JetsAK8_softDropMass->at(0) < baselineMassHigh &&
+	   ntuple->JetsAK8_prunedMass->at(0) > baselineMassLow &&
+	   ntuple->JetsAK8_prunedMass->at(0) < baselineMassHigh &&
            ntuple->JetsAK8->at(1).Pt() > 200. &&
-           ntuple->JetsAK8_softDropMass->at(1) >baselineMassLow && 
-           ntuple->JetsAK8_softDropMass->at(1) < baselineMassHigh
+           ntuple->JetsAK8_prunedMass->at(1) >baselineMassLow && 
+           ntuple->JetsAK8_prunedMass->at(1) < baselineMassHigh
 	   &&
 	   dRtoClosestB(ntuple)>0.8	
 	   //dRtoClosestB(ntuple)>2.0
@@ -1157,21 +1158,39 @@ template<typename ntupleType> bool singleMuBaselineCut(ntupleType* ntuple){
     
 }
 
+template<typename ntupleType> bool doubleMuBaselineCut(ntupleType* ntuple){
+  return ( ntuple->MET > 100.             &&
+           ntuple->HT > 300.                         &&
+           ntuple->JetsAK8->size() >1 &&
+	   ntuple->JetsAK8->at(0).Pt() > 200. && 
+	   ntuple->JetsAK8_softDropMass->at(0) > baselineMassLow &&
+	   ntuple->JetsAK8_softDropMass->at(0) < baselineMassHigh &&
+	   //if(ntuple->JetsAK8->size() > 1){
+           ntuple->JetsAK8->at(1).Pt() > 200. &&
+           ntuple->JetsAK8_softDropMass->at(1) >baselineMassLow && 
+           ntuple->JetsAK8_softDropMass->at(1) < baselineMassHigh
+	   && dRtoClosestB(ntuple)>0.8
+	   &&
+           DeltaPhiCuts(ntuple) && 
+           FiltersCut(ntuple) &&
+           ntuple->JetID == 1 );//&& doubleMuCut(ntuple));
+    
+}
+
 template<typename ntupleType> bool singleEleCut(ntupleType* ntuple){
     if( ntuple->Muons->size() != 0 || ntuple->Electrons->size() != 1 ) return false;
     double MT = computeElectronMT(ntuple);
     return ( ntuple->Electrons->at(0).Pt()>25. && MT < 100. 
 		) ;
 }
-template<typename ntupleType> bool singleEleBaselineCut(ntupleType* ntuple){
-/*
+template<typename ntupleType> bool doubleEleBaselineCut(ntupleType* ntuple){
     bool HEMVeto=true;
     TString sample = ntuple->fChain->GetFile()->GetName();
-    if(sample.Contains("2018")){
+/*
+    if(sample.Contains("data2018")){
     HEMVeto=ntuple->HEMDPhiVetoFilter;
  }
 */
-
   return ( ntuple->MET > 100.             &&
            ntuple->HT > 400.                         &&
            ntuple->JetsAK8->size() >1 &&
@@ -1186,7 +1205,33 @@ template<typename ntupleType> bool singleEleBaselineCut(ntupleType* ntuple){
 	   &&
            DeltaPhiCuts(ntuple) && 
            FiltersCut(ntuple) &&
-           ntuple->JetID == 1 && singleEleCut(ntuple));
+           ntuple->JetID == 1); //&& singleEleCut(ntuple) );
+
+}
+template<typename ntupleType> bool singleEleBaselineCut(ntupleType* ntuple){
+    bool HEMVeto=true;
+    TString sample = ntuple->fChain->GetFile()->GetName();
+/*
+    if(sample.Contains("data2018")){
+    HEMVeto=ntuple->HEMDPhiVetoFilter;
+ }
+*/
+  return ( ntuple->MET > 100.             &&
+           ntuple->HT > 400.                         &&
+           ntuple->JetsAK8->size() >1 &&
+	   ntuple->JetsAK8->at(0).Pt() > 200. && 
+	   ntuple->JetsAK8_softDropMass->at(0) > baselineMassLow &&
+	   ntuple->JetsAK8_softDropMass->at(0) < baselineMassHigh &&
+	   //if(ntuple->JetsAK8->size() > 1){
+           ntuple->JetsAK8->at(1).Pt() > 200. &&
+           ntuple->JetsAK8_softDropMass->at(1) >baselineMassLow && 
+           ntuple->JetsAK8_softDropMass->at(1) < baselineMassHigh
+	   && dRtoClosestB(ntuple)>0.8	
+	   &&
+           DeltaPhiCuts(ntuple) && 
+           FiltersCut(ntuple) &&
+           ntuple->JetID == 1 && singleEleCut(ntuple) );
+
 }
 
 template<typename ntupleType> bool lowDphiBaselineCut(ntupleType* ntuple){
