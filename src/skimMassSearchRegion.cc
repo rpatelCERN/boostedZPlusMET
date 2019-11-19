@@ -113,7 +113,7 @@ std::cout<<"reg "<<reg_<<std::endl;
  	//TTree*newtree=(TTree*)ntuple->fChain->CloneTree(0);
  	TTree*newtree=new TTree("newtree","");//(TTree*)ntuple->fChain->CloneTree(0);
 	int BTags;	
-        double MET,HT,Weight,JetPt1, JetPt2,PrunedMass1, PrunedMass2, Jet1_tau2overtau1, Jet2_tau2overtau1;
+        double MET,HT,Weight,JetPt1, JetPt2, JetPhi1,JetPhi2, PrunedMass1, PrunedMass2, Jet1_tau2overtau1, Jet2_tau2overtau1;
 	double JetEta1,JetEta2;
 	double DeltaRtoClosestB;
         //TBranch*b_BTags, *b_Weight,*b_MET,*b_HT,*b_JetPt1, *b_JetPt2,*b_PrunedMass1, *b_PrunedMass2, *b_Jet1_tau2overtau1, *b_Jet2_tau2overtau1, *b_GenHadTau;
@@ -125,7 +125,9 @@ std::cout<<"reg "<<reg_<<std::endl;
         newtree->Branch("JetPt1", &JetPt1, "JetPt1/D");	
         newtree->Branch("JetPt2", &JetPt2, "JetPt2/D");	
         newtree->Branch("JetEta1", &JetEta1, "JetEta1/D");	
-        newtree->Branch("JetEta2", &JetEta2, "JetEta2/D");	
+        newtree->Branch("JetEta2", &JetEta2, "JetEta2/D");
+        newtree->Branch("JetPhi1", &JetPhi1, "JetPhi1/D");
+        newtree->Branch("JetPhi2", &JetPhi2, "JetPhi2/D");	
         newtree->Branch("PrunedMass1", &PrunedMass1, "PrunedMass1/D");	
         newtree->Branch("PrunedMass2", &PrunedMass2, "PrunedMass2/D");	
         newtree->Branch("Jet1_tau2overtau1", &Jet1_tau2overtau1, "Jet1_tau2overtau1/D");	
@@ -147,7 +149,7 @@ std::cout<<"reg "<<reg_<<std::endl;
         TString filename;
         cout << skims.sampleName[iSample]<<numEvents <<endl;
     for( int iEvt = 0 ; iEvt < min(options.MAX_EVENTS,numEvents) ; iEvt++ ){
-    //for( int iEvt = 0 ; iEvt < min(10,numEvents) ; iEvt++ ){
+    //for( int iEvt = 0 ; iEvt < 1/*min(10,numEvents)*/ ; iEvt++ ){
             ntuple->GetEntry(iEvt);
             if( iEvt % 100000 == 0 ) cout << skims.sampleName[iSample] << ": " << iEvt << "/" << min(options.MAX_EVENTS,numEvents) << endl;
              passBaseline=true;
@@ -174,6 +176,7 @@ std::cout<<"reg "<<reg_<<std::endl;
 	    if(filename.Contains("2016"))lumi=35922.;
 	    if(filename.Contains("2017"))lumi=41529.;
 	    if(filename.Contains("2018"))lumi=59740.;
+            weight = ntuple->Weight*lumi;
 	    weight = ntuple->Weight*lumi*prefireweight;//*trigWeight;//*customPUweights(ntuple)*trigWeight;
 	    //weight = ntuple->Weight *lumi*trigWeight*customPUweights(ntuple);    
 	    //std::cout<<"Weight "<<ntuple->Weight<<std::endl;
@@ -185,13 +188,15 @@ std::cout<<"reg "<<reg_<<std::endl;
 	    DeltaRtoClosestB=dRtoClosestB(ntuple);
 	    if(nAK8>0){
             JetPt1=ntuple->JetsAK8->at(0).Pt();  
-            JetEta1=ntuple->JetsAK8->at(0).Eta();  
+            JetEta1=ntuple->JetsAK8->at(0).Eta();
+            JetPhi1=ntuple->JetsAK8->at(0).Phi();  
 	    PrunedMass1=ntuple->JetsAK8_prunedMass->at(0);
 	   Jet1_tau2overtau1=ntuple->JetsAK8_NsubjettinessTau2->at(0)/ntuple->JetsAK8_NsubjettinessTau1->at(0);
 	   }
 	    if(nAK8>1){
             JetPt2=ntuple->JetsAK8->at(1).Pt();
             JetEta2=ntuple->JetsAK8->at(1).Eta();
+	    JetPhi2=ntuple->JetsAK8->at(1).Phi();
 	    PrunedMass2=ntuple->JetsAK8_prunedMass->at(1);
 	    Jet2_tau2overtau1=ntuple->JetsAK8_NsubjettinessTau2->at(1)/ntuple->JetsAK8_NsubjettinessTau1->at(1);
 	    
@@ -242,6 +247,7 @@ if(reg == skimSamples::kSignal ){
        newtree->Branch("WMatchedJet2", &WMatchedJet2, "WMatchedJet2/I");	
         newtree->Branch("JetPt1", &JetPt1, "JetPt1/D");	
         newtree->Branch("JetPt2", &JetPt2, "JetPt2/D");	
+        
         newtree->Branch("PrunedMass1", &PrunedMass1, "PrunedMass1/D");	
         newtree->Branch("PrunedMass2", &PrunedMass2, "PrunedMass2/D");	
         newtree->Branch("Jet1_tau2overtau1", &Jet1_tau2overtau1, "Jet1_tau2overtau1/D");	
@@ -266,7 +272,7 @@ if(reg == skimSamples::kSignal ){
         double jetMass1,jetMass2;
         TString filename;
     for( int iEvt = 0 ; iEvt < min(options.MAX_EVENTS,numEvents) ; iEvt++ ){
-    //  for( int iEvt = 0 ; iEvt <1000; iEvt++ ){
+      //for( int iEvt = 0 ; iEvt <1000; iEvt++ ){
             ntuple->GetEntry(iEvt);
             if( iEvt % 100000 == 0 ) cout << skims.signalSampleName[iSample] << ": " << iEvt << "/" << min(options.MAX_EVENTS,numEvents) << endl;
 	                 passBaseline=true;
@@ -283,8 +289,8 @@ if(reg == skimSamples::kSignal ){
 	    if(Era=="MC2018")lumi=59740.;
 	    double prefireweight=1.0;
 	    if( Era=="MC2017")prefireweight=ntuple->NonPrefiringProb;
-
-	    weight=ntuple->Weight*lumi*prefireweight/0.25;
+            weight=ntuple->Weight*lumi/0.25;
+	    //weight=ntuple->Weight*lumi*prefireweight/0.25;
             Weight=weight;
 	    HT=ntuple->HT;
 	    MET=ntuple->MET;

@@ -91,6 +91,7 @@ ntuple->fChain->SetBranchStatus("METPhi",1);
   ntuple->fChain->SetBranchStatus("FakeJetFilter",1);
   ntuple->fChain->SetBranchStatus("*Filter",1);
   ntuple->fChain->SetBranchStatus("GenParticles*",1);
+  ntuple->fChain->SetBranchStatus("ecalBadCalibReducedFilter",1);
 }
 
 /***************************************************************/
@@ -1018,6 +1019,7 @@ template<typename ntupleType> bool FiltersCut(ntupleType* ntuple){
     }
    bool NoiseJetFilter=true;
    if(sample.Contains("2017"))NoiseJetFilter=ntuple->EcalNoiseJetFilter;
+   if(sample.Contains("2017") || sample.Contains("2018"))ntuple->ecalBadCalibReducedFilter == 1; 
     return ntuple->HBHENoiseFilter==1 && 
         ntuple->HBHEIsoNoiseFilter==1 && 
         ntuple->eeBadScFilter==1 && 
@@ -1025,7 +1027,8 @@ template<typename ntupleType> bool FiltersCut(ntupleType* ntuple){
         ntuple->NVtx>0 && 
         ntuple->MET/ntuple->CaloMET < 5. &&
         ntuple->BadPFMuonFilter == 1 &&
-        ntuple->BadChargedCandidateFilter == 1  
+        //ntuple->ecalBadCalibReducedFilter == 1
+        //ntuple->BadChargedCandidateFilter == 1  
         && ntuple->globalSuperTightHalo2016Filter==1 &&
         ntuple->LowNeutralJetFilter==1 && ntuple->HTRatioDPhiTightFilter==1 && ntuple->FakeJetFilter==1 && HEMVeto && NoiseJetFilter;	
 }
@@ -1083,12 +1086,15 @@ template<typename ntupleType> bool AK8JetLooseMassCut(ntupleType* ntuple){
 }
 
 
+
+
 template<typename ntupleType> bool baselineCut(ntupleType* ntuple){
  
   return ( ntuple->MET > 300.             &&
            ntuple->HT > 400.                         &&
            ntuple->JetsAK8->size() >1 
 	    &&
+           //hemtrue(ntuple)==1 &&
 	   ntuple->JetsAK8->at(0).Pt() > 200. && 
 	   ntuple->JetsAK8_prunedMass->at(0) > baselineMassLow &&
 	   ntuple->JetsAK8_prunedMass->at(0) < baselineMassHigh &&
@@ -1104,6 +1110,19 @@ template<typename ntupleType> bool baselineCut(ntupleType* ntuple){
            && ntuple->isoElectronTracks+ntuple->isoMuonTracks +ntuple->isoPionTracks==0 &&
            FiltersCut(ntuple) &&
            ntuple->JetID == 1);
+}
+template<typename ntupleType> float hemtrue(ntupleType* ntuple){
+bool hem=0;
+float eta=0.;
+float phi=0.;
+if(ntuple->Jets->size()>1){
+     for (int i=0;i<ntuple->Jets->size();i++){
+         eta=ntuple->Jets->at(i).Eta();
+         phi=ntuple->Jets->at(i).Phi();  
+         }
+                         }                        
+         if(eta<-3.0 || eta>-1.4 || phi<-1.57 || phi>-0.87)hem=1;
+return hem;
 }
 
 template<typename ntupleType> float dRtoClosestB(ntupleType* ntuple){
@@ -1152,7 +1171,7 @@ template<typename ntupleType> bool singleMuBaselineCut(ntupleType* ntuple){
            ntuple->JetsAK8_softDropMass->at(1) < baselineMassHigh
 	   && dRtoClosestB(ntuple)>0.8
 	   &&
-           DeltaPhiCuts(ntuple) && 
+           //DeltaPhiCuts(ntuple) && 
            FiltersCut(ntuple) &&
            ntuple->JetID == 1 && singleMuCut(ntuple));
     
@@ -1169,11 +1188,16 @@ template<typename ntupleType> bool doubleMuBaselineCut(ntupleType* ntuple){
            ntuple->JetsAK8->at(1).Pt() > 200. &&
            ntuple->JetsAK8_softDropMass->at(1) >baselineMassLow && 
            ntuple->JetsAK8_softDropMass->at(1) < baselineMassHigh
-	   && dRtoClosestB(ntuple)>0.8
+	   //&& dRtoClosestB(ntuple)>0.8
 	   &&
-           DeltaPhiCuts(ntuple) && 
+           //DeltaPhiCuts(ntuple) && 
            FiltersCut(ntuple) &&
-           ntuple->JetID == 1 );//&& doubleMuCut(ntuple));
+           ntuple->JetID == 1 && //doubleMuCut(ntuple));
+          (ntuple->Muons->size() > 1) &&
+           (ntuple->Muons->at(0).Pt()+ntuple->Muons->at(1).Pt())>200 &&
+           (((ntuple->Muons->at(0).M())*(ntuple->Muons->at(0).M()))+((ntuple->Muons->at(1).M())*(ntuple->Muons->at(1).M()))+2*((ntuple->Muons->at(0).E()*ntuple->Muons->at(1).E())-(ntuple->Muons->at(0).Px()*ntuple->Muons->at(1).Px())-(ntuple->Muons->at(0).Py()*ntuple->Muons->at(1).Py())-(ntuple->Muons->at(0).Pz()*ntuple->Muons->at(1).Pz())))>75 && (((ntuple->Muons->at(0).M())*(ntuple->Muons->at(0).M()))+((ntuple->Muons->at(1).M())*(ntuple->Muons->at(1).M()))+2*((ntuple->Muons->at(0).E()*ntuple->Muons->at(1).E())-(ntuple->Muons->at(0).Px()*ntuple->Muons->at(1).Px())-(ntuple->Muons->at(0).Py()*ntuple->Muons->at(1).Py())-(ntuple->Muons->at(0).Pz()*ntuple->Muons->at(1).Pz())))<105
+  
+);
     
 }
 
@@ -1201,9 +1225,9 @@ template<typename ntupleType> bool doubleEleBaselineCut(ntupleType* ntuple){
            ntuple->JetsAK8->at(1).Pt() > 200. &&
            ntuple->JetsAK8_softDropMass->at(1) >baselineMassLow && 
            ntuple->JetsAK8_softDropMass->at(1) < baselineMassHigh
-	   && dRtoClosestB(ntuple)>0.8	
+	   //&& dRtoClosestB(ntuple)>0.8	
 	   &&
-           DeltaPhiCuts(ntuple) && 
+           //DeltaPhiCuts(ntuple) && 
            FiltersCut(ntuple) &&
            ntuple->JetID == 1); //&& singleEleCut(ntuple) );
 
@@ -1217,7 +1241,7 @@ template<typename ntupleType> bool singleEleBaselineCut(ntupleType* ntuple){
  }
 */
   return ( ntuple->MET > 100.             &&
-           ntuple->HT > 400.                         &&
+           ntuple->HT > 300.                         &&
            ntuple->JetsAK8->size() >1 &&
 	   ntuple->JetsAK8->at(0).Pt() > 200. && 
 	   ntuple->JetsAK8_softDropMass->at(0) > baselineMassLow &&
@@ -1228,7 +1252,7 @@ template<typename ntupleType> bool singleEleBaselineCut(ntupleType* ntuple){
            ntuple->JetsAK8_softDropMass->at(1) < baselineMassHigh
 	   && dRtoClosestB(ntuple)>0.8	
 	   &&
-           DeltaPhiCuts(ntuple) && 
+           //DeltaPhiCuts(ntuple) && 
            FiltersCut(ntuple) &&
            ntuple->JetID == 1 && singleEleCut(ntuple) );
 
@@ -1264,10 +1288,10 @@ template<typename ntupleType> bool photonBaselineCut(ntupleType* ntuple){
              ntuple->JetsAK8->at(1).Pt() > 200. &&
              ntuple->JetsAK8_softDropMass->at(1) > baselineMassLow && 
              ntuple->JetsAK8_softDropMass->at(1) < baselineMassHigh&&
-             ntuple->DeltaPhi1>0.5 && 
-             ntuple->DeltaPhi2>0.5 &&
-             ntuple->DeltaPhi3>0.3 && 
-             ntuple->DeltaPhi4>0.3 &&
+             //ntuple->DeltaPhi1>0.5 && 
+             //ntuple->DeltaPhi2>0.5 &&
+             //ntuple->DeltaPhi3>0.3 && 
+             //ntuple->DeltaPhi4>0.3 &&
              ntuple->isoElectronTracks==0 &&
              ntuple->isoMuonTracks == 0 && 
              ntuple->isoPionTracks == 0 &&
