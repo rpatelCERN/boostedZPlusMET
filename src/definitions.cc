@@ -1019,18 +1019,19 @@ template<typename ntupleType> bool FiltersCut(ntupleType* ntuple){
     }
    bool NoiseJetFilter=true;
    if(sample.Contains("2017"))NoiseJetFilter=ntuple->EcalNoiseJetFilter;
-   if(sample.Contains("2017") || sample.Contains("2018"))ntuple->ecalBadCalibReducedFilter == 1; 
+   bool BadCalibReducedFilter=true; 
+   if(sample.Contains("2017") || sample.Contains("2018"))BadCalibReducedFilter=ntuple->ecalBadCalibReducedFilter; 
     return ntuple->HBHENoiseFilter==1 && 
         ntuple->HBHEIsoNoiseFilter==1 && 
         ntuple->eeBadScFilter==1 && 
         ntuple->EcalDeadCellTriggerPrimitiveFilter == 1 && 
         ntuple->NVtx>0 && 
         ntuple->MET/ntuple->CaloMET < 5. &&
-        ntuple->BadPFMuonFilter == 1 &&
+        ntuple->BadPFMuonFilter == 1 //&&
         //ntuple->ecalBadCalibReducedFilter == 1
         //ntuple->BadChargedCandidateFilter == 1  
         && ntuple->globalSuperTightHalo2016Filter==1 &&
-        ntuple->LowNeutralJetFilter==1 && ntuple->HTRatioDPhiTightFilter==1 && ntuple->FakeJetFilter==1 && HEMVeto && NoiseJetFilter;	
+        ntuple->LowNeutralJetFilter==1 && ntuple->HTRatioDPhiTightFilter==1 && ntuple->FakeJetFilter==1 && HEMVeto && NoiseJetFilter && BadCalibReducedFilter;	
 }
 
 template<typename ntupleType> bool AK8MultCut(ntupleType* ntuple){
