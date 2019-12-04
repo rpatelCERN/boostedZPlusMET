@@ -1018,8 +1018,8 @@ template<typename ntupleType> bool FiltersCut(ntupleType* ntuple){
        }
     }
    bool NoiseJetFilter=true;
-   if(sample.Contains("2017"))NoiseJetFilter=ntuple->EcalNoiseJetFilter;
    bool BadCalibReducedFilter=true; 
+   if(sample.Contains("2017"))NoiseJetFilter=ntuple->EcalNoiseJetFilter;
    if(sample.Contains("2017") || sample.Contains("2018"))BadCalibReducedFilter=ntuple->ecalBadCalibReducedFilter; 
     return ntuple->HBHENoiseFilter==1 && 
         ntuple->HBHEIsoNoiseFilter==1 && 
@@ -1031,7 +1031,7 @@ template<typename ntupleType> bool FiltersCut(ntupleType* ntuple){
         //ntuple->ecalBadCalibReducedFilter == 1
         //ntuple->BadChargedCandidateFilter == 1  
         && ntuple->globalSuperTightHalo2016Filter==1 &&
-        ntuple->LowNeutralJetFilter==1 && ntuple->HTRatioDPhiTightFilter==1 && ntuple->FakeJetFilter==1 && HEMVeto && NoiseJetFilter && BadCalibReducedFilter;	
+        ntuple->LowNeutralJetFilter==1 && ntuple->HTRatioDPhiTightFilter==1 && ntuple->FakeJetFilter==1 && HEMVeto && NoiseJetFilter; //&& BadCalibReducedFilter;	
 }
 
 template<typename ntupleType> bool AK8MultCut(ntupleType* ntuple){
@@ -1097,11 +1097,11 @@ template<typename ntupleType> bool baselineCut(ntupleType* ntuple){
 	    &&
            //hemtrue(ntuple)==1 &&
 	   ntuple->JetsAK8->at(0).Pt() > 200. && 
-	   ntuple->JetsAK8_prunedMass->at(0) > baselineMassLow &&
-	   ntuple->JetsAK8_prunedMass->at(0) < baselineMassHigh &&
+	   ntuple->JetsAK8_softDropMass->at(0) > baselineMassLow &&
+	   ntuple->JetsAK8_softDropMass->at(0) < baselineMassHigh &&
            ntuple->JetsAK8->at(1).Pt() > 200. &&
-           ntuple->JetsAK8_prunedMass->at(1) >baselineMassLow && 
-           ntuple->JetsAK8_prunedMass->at(1) < baselineMassHigh
+           ntuple->JetsAK8_softDropMass->at(1) >baselineMassLow && 
+           ntuple->JetsAK8_softDropMass->at(1) < baselineMassHigh
 	   &&
 	   dRtoClosestB(ntuple)>0.8	
 	   //dRtoClosestB(ntuple)>2.0

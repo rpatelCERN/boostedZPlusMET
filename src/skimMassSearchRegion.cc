@@ -190,14 +190,14 @@ std::cout<<"reg "<<reg_<<std::endl;
             JetPt1=ntuple->JetsAK8->at(0).Pt();  
             JetEta1=ntuple->JetsAK8->at(0).Eta();
             JetPhi1=ntuple->JetsAK8->at(0).Phi();  
-	    PrunedMass1=ntuple->JetsAK8_prunedMass->at(0);
+	    PrunedMass1=ntuple->JetsAK8_softDropMass->at(0);
 	   Jet1_tau2overtau1=ntuple->JetsAK8_NsubjettinessTau2->at(0)/ntuple->JetsAK8_NsubjettinessTau1->at(0);
 	   }
 	    if(nAK8>1){
             JetPt2=ntuple->JetsAK8->at(1).Pt();
             JetEta2=ntuple->JetsAK8->at(1).Eta();
 	    JetPhi2=ntuple->JetsAK8->at(1).Phi();
-	    PrunedMass2=ntuple->JetsAK8_prunedMass->at(1);
+	    PrunedMass2=ntuple->JetsAK8_softDropMass->at(1);
 	    Jet2_tau2overtau1=ntuple->JetsAK8_NsubjettinessTau2->at(1)/ntuple->JetsAK8_NsubjettinessTau1->at(1);
 	    
 	    }
