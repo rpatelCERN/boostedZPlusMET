@@ -1010,15 +1010,13 @@ template<typename ntupleType> bool ptBinCut(double pt , int ithBin){
 template<typename ntupleType> bool FiltersCut(ntupleType* ntuple){
     bool HEMVeto=true;
     TString sample = ntuple->fChain->GetFile()->GetName();
-/*
-  if(sample.Contains("2018C") || sample.Contains("2018D") || sample.Contains("MC2018")){
+  if(sample.Contains("2018C") || sample.Contains("2018D") || sample.Contains("MC2018HEM")){
 	HEMVeto=ntuple->HEMDPhiVetoFilter;
  	for(unsigned int e=0; e<ntuple->Electrons->size();++e){
 		if(ntuple->Electrons->at(e).Pt()<30)continue;
 		if(ntuple->Electrons->at(e).Eta()>-3.0 && ntuple->Electrons->at(e).Eta()<-1.4 && ntuple->Electrons->at(e).Phi()>-1.57 && ntuple->Electrons->at(e).Phi()<-0.67)HEMVeto=false;
        }
     }
-*/
    bool NoiseJetFilter=true;
    bool ECALBadCalib=true;
    if(sample.Contains("2017"))NoiseJetFilter=ntuple->EcalNoiseJetFilter;
