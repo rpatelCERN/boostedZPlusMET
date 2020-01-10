@@ -15,6 +15,7 @@ public :
 
     TChain *WJets,*ZJets,*QCD,*SnglT,*TT,*GJets,*GJets0p4,*Other,*DY,*TTinc;
     TChain *T5HH750, *T5HH1000, *T5HH1100,*T5HH1200,*T5HH1300,*T5HH1400,*T5HH1500,*T5HH1600,*T5HH1700,*T5HH1800,*T5HH1900,*T5HH2000,*T5HH2100;
+    TChain*T5HH2200, *T5HH2300,*T5HH2400,*T5HH2500;
     TChain *data;
     TChain *data2017;
     TChain *data2018;
@@ -455,6 +456,7 @@ public :
             fillColor.push_back(kBlack);
             lineColor.push_back(1);
         }
+/*
         std::vector<TString> T5HH750FilesNames;
         std::vector<TString> T5HH1000FilesNames;
         std::vector<TString> T5HH1100FilesNames;
@@ -467,154 +469,69 @@ public :
         std::vector<TString> T5HH1800FilesNames;
         std::vector<TString> T5HH1900FilesNames;
         std::vector<TString> T5HH2000FilesNames;
-        std::vector<TString> T5HH2100FilesNames;
-	T5HH750FilesNames.push_back("root://cmseos.fnal.gov//store/user/rgp230/SUSY/BooostedZSkims/tree_signal/tree_T5qqqqZH_750_MC2016.root");
-	T5HH1000FilesNames.push_back("root://cmseos.fnal.gov//store/user/rgp230/SUSY/BooostedZSkims/tree_signal/tree_T5qqqqZH_1000_MC2016.root");
-	T5HH1100FilesNames.push_back("root://cmseos.fnal.gov//store/user/rgp230/SUSY/BooostedZSkims/tree_signal/tree_T5qqqqZH_1100_MC2016.root");
-	T5HH1200FilesNames.push_back("root://cmseos.fnal.gov//store/user/rgp230/SUSY/BooostedZSkims/tree_signal/tree_T5qqqqZH_1200_MC2016.root");
-	T5HH1300FilesNames.push_back("root://cmseos.fnal.gov//store/user/rgp230/SUSY/BooostedZSkims/tree_signal/tree_T5qqqqZH_1300_MC2016.root");
-	T5HH1400FilesNames.push_back("root://cmseos.fnal.gov//store/user/rgp230/SUSY/BooostedZSkims/tree_signal/tree_T5qqqqZH_1400_MC2016.root");
-	T5HH1500FilesNames.push_back("root://cmseos.fnal.gov//store/user/rgp230/SUSY/BooostedZSkims/tree_signal/tree_T5qqqqZH_1500_MC2016.root");
-	T5HH1600FilesNames.push_back("root://cmseos.fnal.gov//store/user/rgp230/SUSY/BooostedZSkims/tree_signal/tree_T5qqqqZH_1600_MC2016.root");
-	T5HH1700FilesNames.push_back("root://cmseos.fnal.gov//store/user/rgp230/SUSY/BooostedZSkims/tree_signal/tree_T5qqqqZH_1700_MC2016.root");
-	T5HH1800FilesNames.push_back("root://cmseos.fnal.gov//store/user/rgp230/SUSY/BooostedZSkims/tree_signal/tree_T5qqqqZH_1800_MC2016.root");
-	T5HH1900FilesNames.push_back("root://cmseos.fnal.gov//store/user/rgp230/SUSY/BooostedZSkims/tree_signal/tree_T5qqqqZH_1900_MC2016.root");
-	T5HH2000FilesNames.push_back("root://cmseos.fnal.gov//store/user/rgp230/SUSY/BooostedZSkims/tree_signal/tree_T5qqqqZH_2000_MC2016.root");
-	T5HH2100FilesNames.push_back("root://cmseos.fnal.gov//store/user/rgp230/SUSY/BooostedZSkims/tree_signal/tree_T5qqqqZH_2100_MC2016.root");
-
-	/*
-        for(unsigned int i=0; i<14; ++i)T5HH750FilesNames.push_back(TString::Format("root://cmseos.fnal.gov//store/user/fojensen/T5qqqqZHProduction_21022018/Summer16.SMS-T5qqqqZH-mGluino750_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_%d_RA2AnalysisTree.root",i));
-        for(unsigned int i=0; i<19; ++i)T5HH1000FilesNames.push_back(TString::Format("root://cmseos.fnal.gov//store/user/fojensen/T5qqqqZHProduction_21022018/Summer16.SMS-T5qqqqZH-mGluino1000_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_%d_RA2AnalysisTree.root",i));
-        for(unsigned int i=0; i<11; ++i)T5HH1100FilesNames.push_back(TString::Format("root://cmseos.fnal.gov//store/user/fojensen/T5qqqqZHProduction_21022018/Summer16.SMS-T5qqqqZH-mGluino1100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_%d_RA2AnalysisTree.root",i));
-        for(unsigned int i=0; i<22; ++i)T5HH1200FilesNames.push_back(TString::Format("root://cmseos.fnal.gov//store/user/fojensen/T5qqqqZHProduction_21022018/Summer16.SMS-T5qqqqZH-mGluino1200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_%d_RA2AnalysisTree.root",i));
-        for(unsigned int i=0; i<13; ++i)T5HH1300FilesNames.push_back(TString::Format("root://cmseos.fnal.gov//store/user/fojensen/T5qqqqZHProduction_21022018/Summer16.SMS-T5qqqqZH-mGluino1300_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_%d_RA2AnalysisTree.root",i));
-        for(unsigned int i=0; i<19; ++i)T5HH1400FilesNames.push_back(TString::Format("root://cmseos.fnal.gov//store/user/fojensen/T5qqqqZHProduction_21022018/Summer16.SMS-T5qqqqZH-mGluino1400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_%d_RA2AnalysisTree.root",i));
-        for(unsigned int i=0; i<25; ++i)T5HH1500FilesNames.push_back(TString::Format("root://cmseos.fnal.gov//store/user/fojensen/T5qqqqZHProduction_21022018/Summer16.SMS-T5qqqqZH-mGluino1500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_%d_RA2AnalysisTree.root",i));
-        for(unsigned int i=0; i<15; ++i)T5HH1600FilesNames.push_back(TString::Format("root://cmseos.fnal.gov//store/user/fojensen/T5qqqqZHProduction_21022018/Summer16.SMS-T5qqqqZH-mGluino1600_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_%d_RA2AnalysisTree.root",i));
-        for(unsigned int i=0; i<8; ++i)T5HH1700FilesNames.push_back(TString::Format("root://cmseos.fnal.gov//store/user/fojensen/T5qqqqZHProduction_21022018/Summer16.SMS-T5qqqqZH-mGluino1700_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_%d_RA2AnalysisTree.root",i));
-        for(unsigned int i=0; i<9; ++i)T5HH1800FilesNames.push_back(TString::Format("root://cmseos.fnal.gov//store/user/fojensen/T5qqqqZHProduction_21022018/Summer16.SMS-T5qqqqZH-mGluino1800_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_%d_RA2AnalysisTree.root",i));
-        for(unsigned int i=0; i<9; ++i)T5HH1900FilesNames.push_back(TString::Format("root://cmseos.fnal.gov//store/user/fojensen/T5qqqqZHProduction_21022018/Summer16.SMS-T5qqqqZH-mGluino1900_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_%d_RA2AnalysisTree.root",i));
-        for(unsigned int i=0; i<29; ++i)T5HH2000FilesNames.push_back(TString::Format("root://cmseos.fnal.gov//store/user/fojensen/T5qqqqZHProduction_21022018/Summer16.SMS-T5qqqqZH-mGluino2000_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_%d_RA2AnalysisTree.root",i));
-        for(unsigned int i=0; i<26; ++i)T5HH2100FilesNames.push_back(TString::Format("root://cmseos.fnal.gov//store/user/fojensen/T5qqqqZHProduction_21022018/Summer16.SMS-T5qqqqZH-mGluino2100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_%d_RA2AnalysisTree.root",i));
-	 */
-        if( r == kSignal ){
-            T5HH750 = new TChain("tree");
-            for( int i = 0 ; i < T5HH750FilesNames.size() ; i++ ){
-                T5HH750->Add(T5HH750FilesNames[i]);
-            }
-            signalNtuples.push_back(new RA2bTree(T5HH750));
-            signalSampleName.push_back("T5HH750");
-            sigLineColor.push_back(kRed);
-        }
-        if( r == kSignal ){
+        std::vector<TString> T5HH2100FilesNames;									    
+        std::vector<TString> T5HH2200FilesNames;									    
+        std::vector<TString> T5HH2300FilesNames;									    
+        std::vector<TString> T5HH2400FilesNames;									    
+        std::vector<TString> T5HH2500FilesNames;									    
+        std::vector<TString> T5ZZFilesNames;									    
+	*/
+        T5HH1000 = new TChain("tree");
+        T5HH1100 = new TChain("tree");
+        T5HH1200 = new TChain("tree");
+        T5HH1300 = new TChain("tree");
+        T5HH1400 = new TChain("tree");
+        T5HH1500 = new TChain("tree");
+        T5HH1600 = new TChain("tree");
+        T5HH1700 = new TChain("tree");
+        T5HH1800 = new TChain("tree");
+        T5HH1900 = new TChain("tree");
+        T5HH2000 = new TChain("tree");
+        T5HH2100 = new TChain("tree");
+        T5HH2200 = new TChain("tree");
+        T5HH2300 = new TChain("tree");
+        T5HH2400 = new TChain("tree");
+        T5HH2500 = new TChain("tree");
 	
-            T5HH1000 = new TChain("tree");
-            for( int i = 0 ; i < T5HH1000FilesNames.size() ; i++ ){
-                T5HH1000->Add(T5HH1000FilesNames[i]);
-            }
+	T5HH1000->Add("root://cmseos.fnal.gov//store/user/rgp230/SUSY/TChiHHV17/Skims/tree_signal/TwoZEvents/tree_T5qqqqZH_1000_1_MC2016.root");
+	T5HH1100->Add("root://cmseos.fnal.gov//store/user/rgp230/SUSY/TChiHHV17/Skims/tree_signal/TwoZEvents/tree_T5qqqqZH_1100_1_MC2016.root");
+	T5HH1200->Add("root://cmseos.fnal.gov//store/user/rgp230/SUSY/TChiHHV17/Skims/tree_signal/TwoZEvents/tree_T5qqqqZH_1200_1_MC2016.root");
+	T5HH1300->Add("root://cmseos.fnal.gov//store/user/rgp230/SUSY/TChiHHV17/Skims/tree_signal/TwoZEvents/tree_T5qqqqZH_1300_1_MC2016.root");
+	T5HH1400->Add("root://cmseos.fnal.gov//store/user/rgp230/SUSY/TChiHHV17/Skims/tree_signal/TwoZEvents/tree_T5qqqqZH_1400_1_MC2016.root");
+	T5HH1500->Add("root://cmseos.fnal.gov//store/user/rgp230/SUSY/TChiHHV17/Skims/tree_signal/TwoZEvents/tree_T5qqqqZH_1500_1_MC2016.root");
+	T5HH1600->Add("root://cmseos.fnal.gov//store/user/rgp230/SUSY/TChiHHV17/Skims/tree_signal/TwoZEvents/tree_T5qqqqZH_1600_1_MC2016.root");
+	T5HH1700->Add("root://cmseos.fnal.gov//store/user/rgp230/SUSY/TChiHHV17/Skims/tree_signal/TwoZEvents/tree_T5qqqqZH_1700_1_MC2016.root");
+	T5HH1800->Add("root://cmseos.fnal.gov//store/user/rgp230/SUSY/TChiHHV17/Skims/tree_signal/TwoZEvents/tree_T5qqqqZH_1800_1_MC2016.root");
+	T5HH1900->Add("root://cmseos.fnal.gov//store/user/rgp230/SUSY/TChiHHV17/Skims/tree_signal/TwoZEvents/tree_T5qqqqZH_1900_1_MC2016.root");
+	T5HH2000->Add("root://cmseos.fnal.gov//store/user/rgp230/SUSY/TChiHHV17/Skims/tree_signal/TwoZEvents/tree_T5qqqqZH_2000_1_MC2016.root");
+	T5HH2100->Add("root://cmseos.fnal.gov//store/user/rgp230/SUSY/TChiHHV17/Skims/tree_signal/TwoZEvents/tree_T5qqqqZH_2100_1_MC2016.root");
+	T5HH2200->Add("root://cmseos.fnal.gov//store/user/rgp230/SUSY/TChiHHV17/Skims/tree_signal/TwoZEvents/tree_T5qqqqZH_2200_1_MC2016.root");
+	T5HH2300->Add("root://cmseos.fnal.gov//store/user/rgp230/SUSY/TChiHHV17/Skims/tree_signal/TwoZEvents/tree_T5qqqqZH_2300_1_MC2016.root");
+	T5HH2400->Add("root://cmseos.fnal.gov//store/user/rgp230/SUSY/TChiHHV17/Skims/tree_signal/TwoZEvents/tree_T5qqqqZH_2400_1_MC2016.root");
+	T5HH2500->Add("root://cmseos.fnal.gov//store/user/rgp230/SUSY/TChiHHV17/Skims/tree_signal/TwoZEvents/tree_T5qqqqZH_2500_1_MC2016.root");
+        if( r == kSignal ){
             signalNtuples.push_back(new RA2bTree(T5HH1000));
-            signalSampleName.push_back("T5HH1000");
-            sigLineColor.push_back(kRed);
-        }
-        if( r == kSignal ){
-            T5HH1100 = new TChain("tree");
-            for( int i = 0 ; i < T5HH1100FilesNames.size() ; i++ ){
-                T5HH1100->Add(T5HH1100FilesNames[i]);
-            }
             signalNtuples.push_back(new RA2bTree(T5HH1100));
-            signalSampleName.push_back("T5HH1100");
-            sigLineColor.push_back(kRed);
-        }
-        if( r == kSignal ){
-            T5HH1200 = new TChain("tree");
-            for( int i = 0 ; i < T5HH1200FilesNames.size() ; i++ ){
-                T5HH1200->Add(T5HH1200FilesNames[i]);
-            }
             signalNtuples.push_back(new RA2bTree(T5HH1200));
-            signalSampleName.push_back("T5HH1200");
-            sigLineColor.push_back(kRed);
-        }
-        if( r == kSignal ){
-            T5HH1300 = new TChain("tree");
-            for( int i = 0 ; i < T5HH1300FilesNames.size() ; i++ ){
-                T5HH1300->Add(T5HH1300FilesNames[i]);
-            }
             signalNtuples.push_back(new RA2bTree(T5HH1300));
-            signalSampleName.push_back("T5HH1300");
-            sigLineColor.push_back(kRed);
-        }
-        if( r == kSignal ){
-            T5HH1400 = new TChain("tree");
-            for( int i = 0 ; i < T5HH1400FilesNames.size() ; i++ ){
-                T5HH1400->Add(T5HH1400FilesNames[i]);
-            }
             signalNtuples.push_back(new RA2bTree(T5HH1400));
-            signalSampleName.push_back("T5HH1400");
-            sigLineColor.push_back(kRed);
-        }
-        if( r == kSignal ){
-            T5HH1500 = new TChain("tree");
-            for( int i = 0 ; i < T5HH1500FilesNames.size() ; i++ ){
-                T5HH1500->Add(T5HH1500FilesNames[i]);
-            }
             signalNtuples.push_back(new RA2bTree(T5HH1500));
-            signalSampleName.push_back("T5HH1500");
-            sigLineColor.push_back(kRed);
-        }
-        if( r == kSignal ){
-            T5HH1600 = new TChain("tree");
-            for( int i = 0 ; i < T5HH1600FilesNames.size() ; i++ ){
-                T5HH1600->Add(T5HH1600FilesNames[i]);
-            }
             signalNtuples.push_back(new RA2bTree(T5HH1600));
-            signalSampleName.push_back("T5HH1600");
-            sigLineColor.push_back(kRed);
-        }
-        if( r == kSignal ){
-            T5HH1700 = new TChain("tree");
-            for( int i = 0 ; i < T5HH1700FilesNames.size() ; i++ ){
-                T5HH1700->Add(T5HH1700FilesNames[i]);
-            }
             signalNtuples.push_back(new RA2bTree(T5HH1700));
-            signalSampleName.push_back("T5HH1700");
-            sigLineColor.push_back(kOrange);
-        }
-        if( r == kSignal ){
-            T5HH1800 = new TChain("tree");
-            for( int i = 0 ; i < T5HH1800FilesNames.size() ; i++ ){
-                T5HH1800->Add(T5HH1800FilesNames[i]);
-            }
             signalNtuples.push_back(new RA2bTree(T5HH1800));
-            signalSampleName.push_back("T5HH1800");
-            sigLineColor.push_back(kRed);
-        }
-        if( r == kSignal ){
-            T5HH1900 = new TChain("tree");
-            for( int i = 0 ; i < T5HH1900FilesNames.size() ; i++ ){
-                T5HH1900->Add(T5HH1900FilesNames[i]);
-            }
             signalNtuples.push_back(new RA2bTree(T5HH1900));
-            signalSampleName.push_back("T5HH1900");
-            sigLineColor.push_back(kRed);
-        }
-	
-        if( r == kSignal ){
-            T5HH2000 = new TChain("tree");
-            for( int i = 0 ; i < T5HH2000FilesNames.size() ; i++ ){
-                T5HH2000->Add(T5HH2000FilesNames[i]);
-            }
             signalNtuples.push_back(new RA2bTree(T5HH2000));
-            signalSampleName.push_back("T5HH2000");
-            sigLineColor.push_back(kRed);
-        }
-        if( r == kSignal ){
-            T5HH2100 = new TChain("tree");
-            for( int i = 0 ; i < T5HH2100FilesNames.size() ; i++ ){
-                T5HH2100->Add(T5HH2100FilesNames[i]);
-            }
             signalNtuples.push_back(new RA2bTree(T5HH2100));
-            signalSampleName.push_back("T5HH2100");
-            sigLineColor.push_back(kRed);
+            signalNtuples.push_back(new RA2bTree(T5HH2200));
+            signalNtuples.push_back(new RA2bTree(T5HH2300));
+            signalNtuples.push_back(new RA2bTree(T5HH2400));
+            signalNtuples.push_back(new RA2bTree(T5HH2500));
+            for( int i = 0 ; i < signalNtuples.size() ; i++ ){
+		int mass=1000+100*i;
+            	signalSampleName.push_back(TString::Format("T5ZZ%d" ,mass));
+            	sigLineColor.push_back(kRed);
+		
+	    }
         }
     };
 
