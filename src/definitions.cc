@@ -72,6 +72,7 @@ ntuple->fChain->SetBranchStatus("METPhi",1);
   ntuple->fChain->SetBranchStatus("HBHEIsoNoiseFilter",1);
   ntuple->fChain->SetBranchStatus("globalSuperTightHalo2016Filter",1);
   ntuple->fChain->SetBranchStatus("eeBadScFilter",1);
+  ntuple->fChain->SetBranchStatus("ecalBadCalibReducedFilter",1);
   ntuple->fChain->SetBranchStatus("EcalDeadCellTriggerPrimitiveFilter",1);
   ntuple->fChain->SetBranchStatus("BadPFMuonFilter",1);
   ntuple->fChain->SetBranchStatus("BadChargedCandidateFilter",1);
@@ -91,7 +92,6 @@ ntuple->fChain->SetBranchStatus("METPhi",1);
   ntuple->fChain->SetBranchStatus("FakeJetFilter",1);
   ntuple->fChain->SetBranchStatus("*Filter",1);
   ntuple->fChain->SetBranchStatus("GenParticles*",1);
-  ntuple->fChain->SetBranchStatus("ecalBadCalibReducedFilter",1);
 }
 
 /***************************************************************/
@@ -643,13 +643,13 @@ template<typename ntupleType> double fillLeadingJetMass(ntupleType* ntuple){
 }
 
 template<typename ntupleType> double fillLeadingJetMass_photon(ntupleType* ntuple){
-    if(ntuple->JetsAK8Clean_prunedMass->size()==0) return -99999.;
-    return ntuple->JetsAK8Clean_prunedMass->at(0);
+    if(ntuple->JetsAK8Clean_softDropMass->size()==0) return -99999.;
+    return ntuple->JetsAK8Clean_softDropMass->at(0);
 }
 
 template<typename ntupleType> double fillSubLeadingJetMass_photon(ntupleType* ntuple){
-    if(ntuple->JetsAK8Clean_prunedMass->size()<2) return -99999.;
-    return ntuple->JetsAK8Clean_prunedMass->at(1);
+    if(ntuple->JetsAK8Clean_softDropMass->size()<2) return -99999.;
+    return ntuple->JetsAK8Clean_softDropMass->at(1);
 }
 
 template<typename ntupleType> double fillLeadingJetFlavor(ntupleType* ntuple){
@@ -1010,28 +1010,29 @@ template<typename ntupleType> bool ptBinCut(double pt , int ithBin){
 template<typename ntupleType> bool FiltersCut(ntupleType* ntuple){
     bool HEMVeto=true;
     TString sample = ntuple->fChain->GetFile()->GetName();
-    if(sample.Contains("2018C") || sample.Contains("2018D") || sample.Contains("MC2018")){
+/*
+  if(sample.Contains("2018C") || sample.Contains("2018D") || sample.Contains("MC2018")){
 	HEMVeto=ntuple->HEMDPhiVetoFilter;
-    	for(unsigned int e=0; e<ntuple->Electrons->size();++e){
+ 	for(unsigned int e=0; e<ntuple->Electrons->size();++e){
 		if(ntuple->Electrons->at(e).Pt()<30)continue;
 		if(ntuple->Electrons->at(e).Eta()>-3.0 && ntuple->Electrons->at(e).Eta()<-1.4 && ntuple->Electrons->at(e).Phi()>-1.57 && ntuple->Electrons->at(e).Phi()<-0.67)HEMVeto=false;
        }
     }
+*/
    bool NoiseJetFilter=true;
-   bool BadCalibReducedFilter=true; 
+   bool ECALBadCalib=true;
    if(sample.Contains("2017"))NoiseJetFilter=ntuple->EcalNoiseJetFilter;
-   if(sample.Contains("2017") || sample.Contains("2018"))BadCalibReducedFilter=ntuple->ecalBadCalibReducedFilter; 
+   if(sample.Contains("2018") || sample.Contains("2018"))ECALBadCalib=ntuple->ecalBadCalibReducedFilter;
     return ntuple->HBHENoiseFilter==1 && 
         ntuple->HBHEIsoNoiseFilter==1 && 
         ntuple->eeBadScFilter==1 && 
         ntuple->EcalDeadCellTriggerPrimitiveFilter == 1 && 
         ntuple->NVtx>0 && 
         ntuple->MET/ntuple->CaloMET < 5. &&
-        ntuple->BadPFMuonFilter == 1 //&&
-        //ntuple->ecalBadCalibReducedFilter == 1
+        ntuple->BadPFMuonFilter == 1 && 
         //ntuple->BadChargedCandidateFilter == 1  
-        && ntuple->globalSuperTightHalo2016Filter==1 &&
-        ntuple->LowNeutralJetFilter==1 && ntuple->HTRatioDPhiTightFilter==1 && ntuple->FakeJetFilter==1 && HEMVeto && NoiseJetFilter; //&& BadCalibReducedFilter;	
+        ntuple->globalSuperTightHalo2016Filter==1 &&
+        ntuple->LowNeutralJetFilter==1 && ntuple->HTRatioDPhiTightFilter==1 && ntuple->FakeJetFilter==1 && HEMVeto && NoiseJetFilter && ECALBadCalib;	
 }
 
 template<typename ntupleType> bool AK8MultCut(ntupleType* ntuple){
@@ -1087,15 +1088,12 @@ template<typename ntupleType> bool AK8JetLooseMassCut(ntupleType* ntuple){
 }
 
 
-
-
 template<typename ntupleType> bool baselineCut(ntupleType* ntuple){
  
   return ( ntuple->MET > 300.             &&
            ntuple->HT > 400.                         &&
            ntuple->JetsAK8->size() >1 
 	    &&
-           //hemtrue(ntuple)==1 &&
 	   ntuple->JetsAK8->at(0).Pt() > 200. && 
 	   ntuple->JetsAK8_softDropMass->at(0) > baselineMassLow &&
 	   ntuple->JetsAK8_softDropMass->at(0) < baselineMassHigh &&
@@ -1103,27 +1101,13 @@ template<typename ntupleType> bool baselineCut(ntupleType* ntuple){
            ntuple->JetsAK8_softDropMass->at(1) >baselineMassLow && 
            ntuple->JetsAK8_softDropMass->at(1) < baselineMassHigh
 	   &&
-	   dRtoClosestB(ntuple)>0.8	
+	   dRtoClosestB(ntuple)>0.8 && 	
 	   //dRtoClosestB(ntuple)>2.0
-	   &&
            DeltaPhiCuts(ntuple) && 
            ntuple->Muons->size()+ntuple->Electrons->size()==0 
            && ntuple->isoElectronTracks+ntuple->isoMuonTracks +ntuple->isoPionTracks==0 &&
            FiltersCut(ntuple) &&
            ntuple->JetID == 1);
-}
-template<typename ntupleType> float hemtrue(ntupleType* ntuple){
-bool hem=0;
-float eta=0.;
-float phi=0.;
-if(ntuple->Jets->size()>1){
-     for (int i=0;i<ntuple->Jets->size();i++){
-         eta=ntuple->Jets->at(i).Eta();
-         phi=ntuple->Jets->at(i).Phi();  
-         }
-                         }                        
-         if(eta<-3.0 || eta>-1.4 || phi<-1.57 || phi>-0.87)hem=1;
-return hem;
 }
 
 template<typename ntupleType> float dRtoClosestB(ntupleType* ntuple){
@@ -1170,15 +1154,18 @@ template<typename ntupleType> bool singleMuBaselineCut(ntupleType* ntuple){
            ntuple->JetsAK8->at(1).Pt() > 200. &&
            ntuple->JetsAK8_softDropMass->at(1) >baselineMassLow && 
            ntuple->JetsAK8_softDropMass->at(1) < baselineMassHigh
-	   && dRtoClosestB(ntuple)>0.8
+	   //&& dRtoClosestB(ntuple)>0.8
 	   &&
-           //DeltaPhiCuts(ntuple) && 
+           DeltaPhiCuts(ntuple) && 
            FiltersCut(ntuple) &&
            ntuple->JetID == 1 && singleMuCut(ntuple));
     
 }
 
 template<typename ntupleType> bool doubleMuBaselineCut(ntupleType* ntuple){
+	  TLorentzVector leptonVector;
+	leptonVector=	ntuple->Muons->at(0)+ntuple->Muons->at(1);
+	float deltaM=fabs(leptonVector.M()-90);
   return ( ntuple->MET > 100.             &&
            ntuple->HT > 300.                         &&
            ntuple->JetsAK8->size() >1 &&
@@ -1189,16 +1176,11 @@ template<typename ntupleType> bool doubleMuBaselineCut(ntupleType* ntuple){
            ntuple->JetsAK8->at(1).Pt() > 200. &&
            ntuple->JetsAK8_softDropMass->at(1) >baselineMassLow && 
            ntuple->JetsAK8_softDropMass->at(1) < baselineMassHigh
-	   //&& dRtoClosestB(ntuple)>0.8
+	   && dRtoClosestB(ntuple)>0.8
 	   &&
-           //DeltaPhiCuts(ntuple) && 
+           DeltaPhiCuts(ntuple) && 
            FiltersCut(ntuple) &&
-           ntuple->JetID == 1 && //doubleMuCut(ntuple));
-          (ntuple->Muons->size() > 1) &&
-           (ntuple->Muons->at(0).Pt()+ntuple->Muons->at(1).Pt())>200 &&
-           (((ntuple->Muons->at(0).M())*(ntuple->Muons->at(0).M()))+((ntuple->Muons->at(1).M())*(ntuple->Muons->at(1).M()))+2*((ntuple->Muons->at(0).E()*ntuple->Muons->at(1).E())-(ntuple->Muons->at(0).Px()*ntuple->Muons->at(1).Px())-(ntuple->Muons->at(0).Py()*ntuple->Muons->at(1).Py())-(ntuple->Muons->at(0).Pz()*ntuple->Muons->at(1).Pz())))>75 && (((ntuple->Muons->at(0).M())*(ntuple->Muons->at(0).M()))+((ntuple->Muons->at(1).M())*(ntuple->Muons->at(1).M()))+2*((ntuple->Muons->at(0).E()*ntuple->Muons->at(1).E())-(ntuple->Muons->at(0).Px()*ntuple->Muons->at(1).Px())-(ntuple->Muons->at(0).Py()*ntuple->Muons->at(1).Py())-(ntuple->Muons->at(0).Pz()*ntuple->Muons->at(1).Pz())))<105
-  
-);
+           ntuple->JetID == 1 && deltaM<15 && leptonVector.Pt()>100);//&& doubleMuCut(ntuple));
     
 }
 
@@ -1216,6 +1198,9 @@ template<typename ntupleType> bool doubleEleBaselineCut(ntupleType* ntuple){
     HEMVeto=ntuple->HEMDPhiVetoFilter;
  }
 */
+	  TLorentzVector leptonVector;
+	leptonVector=	ntuple->Electrons->at(0)+ntuple->Electrons->at(1);
+	float deltaM=fabs(leptonVector.M()-90);
   return ( ntuple->MET > 100.             &&
            ntuple->HT > 400.                         &&
            ntuple->JetsAK8->size() >1 &&
@@ -1226,11 +1211,11 @@ template<typename ntupleType> bool doubleEleBaselineCut(ntupleType* ntuple){
            ntuple->JetsAK8->at(1).Pt() > 200. &&
            ntuple->JetsAK8_softDropMass->at(1) >baselineMassLow && 
            ntuple->JetsAK8_softDropMass->at(1) < baselineMassHigh
-	   //&& dRtoClosestB(ntuple)>0.8	
+	   && dRtoClosestB(ntuple)>0.8	
 	   &&
-           //DeltaPhiCuts(ntuple) && 
+           DeltaPhiCuts(ntuple) && 
            FiltersCut(ntuple) &&
-           ntuple->JetID == 1); //&& singleEleCut(ntuple) );
+           ntuple->JetID == 1 && deltaM<15 && leptonVector.Pt()>100); //&& singleEleCut(ntuple) );
 
 }
 template<typename ntupleType> bool singleEleBaselineCut(ntupleType* ntuple){
@@ -1242,7 +1227,7 @@ template<typename ntupleType> bool singleEleBaselineCut(ntupleType* ntuple){
  }
 */
   return ( ntuple->MET > 100.             &&
-           ntuple->HT > 300.                         &&
+           ntuple->HT > 400.                         &&
            ntuple->JetsAK8->size() >1 &&
 	   ntuple->JetsAK8->at(0).Pt() > 200. && 
 	   ntuple->JetsAK8_softDropMass->at(0) > baselineMassLow &&
@@ -1251,9 +1236,9 @@ template<typename ntupleType> bool singleEleBaselineCut(ntupleType* ntuple){
            ntuple->JetsAK8->at(1).Pt() > 200. &&
            ntuple->JetsAK8_softDropMass->at(1) >baselineMassLow && 
            ntuple->JetsAK8_softDropMass->at(1) < baselineMassHigh
-	   && dRtoClosestB(ntuple)>0.8	
+	//   && dRtoClosestB(ntuple)>0.8	
 	   &&
-           //DeltaPhiCuts(ntuple) && 
+           DeltaPhiCuts(ntuple) && 
            FiltersCut(ntuple) &&
            ntuple->JetID == 1 && singleEleCut(ntuple) );
 
@@ -1289,10 +1274,10 @@ template<typename ntupleType> bool photonBaselineCut(ntupleType* ntuple){
              ntuple->JetsAK8->at(1).Pt() > 200. &&
              ntuple->JetsAK8_softDropMass->at(1) > baselineMassLow && 
              ntuple->JetsAK8_softDropMass->at(1) < baselineMassHigh&&
-             //ntuple->DeltaPhi1>0.5 && 
-             //ntuple->DeltaPhi2>0.5 &&
-             //ntuple->DeltaPhi3>0.3 && 
-             //ntuple->DeltaPhi4>0.3 &&
+             ntuple->DeltaPhi1>0.5 && 
+             ntuple->DeltaPhi2>0.5 &&
+             ntuple->DeltaPhi3>0.3 && 
+             ntuple->DeltaPhi4>0.3 &&
              ntuple->isoElectronTracks==0 &&
              ntuple->isoMuonTracks == 0 && 
              ntuple->isoPionTracks == 0 &&
@@ -1475,68 +1460,68 @@ template<typename ntupleType> bool doubleTaggingLooseCut_photon(ntupleType* ntup
 }
 
 template<typename ntupleType> bool doubleMassCut_photon(ntupleType* ntuple ){
-    return ( ntuple->JetsAK8Clean_prunedMass->at(0) > ZmassWindowLow &&
-             ntuple->JetsAK8Clean_prunedMass->at(0) < ZmassWindowHigh &&
-             ntuple->JetsAK8Clean_prunedMass->at(1) > ZmassWindowLow &&
-             ntuple->JetsAK8Clean_prunedMass->at(1) < ZmassWindowHigh );
+    return ( ntuple->JetsAK8Clean_softDropMass->at(0) > ZmassWindowLow &&
+             ntuple->JetsAK8Clean_softDropMass->at(0) < ZmassWindowHigh &&
+             ntuple->JetsAK8Clean_softDropMass->at(1) > ZmassWindowLow &&
+             ntuple->JetsAK8Clean_softDropMass->at(1) < ZmassWindowHigh );
 }
 
 template<typename ntupleType> bool singleTagCut_photon(ntupleType* ntuple ){
-    return ( (ntuple->JetsAK8Clean_prunedMass->at(0) > ZmassWindowLow && 
-              ntuple->JetsAK8Clean_prunedMass->at(0) < ZmassWindowHigh && 
+    return ( (ntuple->JetsAK8Clean_softDropMass->at(0) > ZmassWindowLow && 
+              ntuple->JetsAK8Clean_softDropMass->at(0) < ZmassWindowHigh && 
               ntuple->JetsAK8Clean_NsubjettinessTau2->at(0)/ntuple->JetsAK8Clean_NsubjettinessTau1->at(0) > tau21Cut ) || 
-             (ntuple->JetsAK8Clean_prunedMass->at(1) > ZmassWindowLow && 
-              ntuple->JetsAK8Clean_prunedMass->at(1) < ZmassWindowHigh && 
+             (ntuple->JetsAK8Clean_softDropMass->at(1) > ZmassWindowLow && 
+              ntuple->JetsAK8Clean_softDropMass->at(1) < ZmassWindowHigh && 
               ntuple->JetsAK8Clean_NsubjettinessTau2->at(1)/ntuple->JetsAK8Clean_NsubjettinessTau1->at(1) > tau21Cut ) ) ;
 }
 
 template<typename ntupleType> bool doubleTagCut_photon(ntupleType* ntuple ){
-    return ( ntuple->JetsAK8Clean_prunedMass->at(0) > ZmassWindowLow && 
-             ntuple->JetsAK8Clean_prunedMass->at(0) < ZmassWindowHigh && 
+    return ( ntuple->JetsAK8Clean_softDropMass->at(0) > ZmassWindowLow && 
+             ntuple->JetsAK8Clean_softDropMass->at(0) < ZmassWindowHigh && 
              ntuple->JetsAK8Clean_NsubjettinessTau2->at(0)/ntuple->JetsAK8Clean_NsubjettinessTau1->at(0) > tau21Cut && 
-             ntuple->JetsAK8Clean_prunedMass->at(1) > ZmassWindowLow && 
-             ntuple->JetsAK8Clean_prunedMass->at(1) < ZmassWindowHigh && 
+             ntuple->JetsAK8Clean_softDropMass->at(1) > ZmassWindowLow && 
+             ntuple->JetsAK8Clean_softDropMass->at(1) < ZmassWindowHigh && 
              ntuple->JetsAK8Clean_NsubjettinessTau2->at(1)/ntuple->JetsAK8Clean_NsubjettinessTau1->at(1) > tau21Cut ) ;
 }
 
 template<typename ntupleType> bool tagSR_photon(ntupleType* ntuple, int i){
     if( ntuple->JetsAK8Clean_doubleBDiscriminator->size() <= i || 
-        ntuple->JetsAK8Clean_prunedMass->size() <= i ) return false;
+        ntuple->JetsAK8Clean_softDropMass->size() <= i ) return false;
     return ( ntuple->JetsAK8Clean_NsubjettinessTau2->at(i)/ntuple->JetsAK8Clean_NsubjettinessTau1->at(i) > tau21Cut && 
-             ntuple->JetsAK8Clean_prunedMass->at(i) > ZmassWindowLow && 
-             ntuple->JetsAK8Clean_prunedMass->at(i) < ZmassWindowHigh );
+             ntuple->JetsAK8Clean_softDropMass->at(i) > ZmassWindowLow && 
+             ntuple->JetsAK8Clean_softDropMass->at(i) < ZmassWindowHigh );
 }
 
 template<typename ntupleType> bool tagSB_photon(ntupleType* ntuple, int i ){
     if( ntuple->JetsAK8Clean_doubleBDiscriminator->size() <= i || 
-        ntuple->JetsAK8Clean_prunedMass->size() <= i ) return false;
+        ntuple->JetsAK8Clean_softDropMass->size() <= i ) return false;
     return ( ntuple->JetsAK8Clean_NsubjettinessTau2->at(i)/ntuple->JetsAK8Clean_NsubjettinessTau1->at(i) > tau21Cut &&
              (
-              ( ntuple->JetsAK8Clean_prunedMass->at(i) < ZmassWindowLow &&
-                ntuple->JetsAK8Clean_prunedMass->at(i) > baselineMassLow ) ||
-              ( ntuple->JetsAK8Clean_prunedMass->at(i) > ZmassWindowHigh &&
-                ntuple->JetsAK8Clean_prunedMass->at(i) < baselineMassHigh ) 
+              ( ntuple->JetsAK8Clean_softDropMass->at(i) < ZmassWindowLow &&
+                ntuple->JetsAK8Clean_softDropMass->at(i) > baselineMassLow ) ||
+              ( ntuple->JetsAK8Clean_softDropMass->at(i) > ZmassWindowHigh &&
+                ntuple->JetsAK8Clean_softDropMass->at(i) < baselineMassHigh ) 
               ) 
              );
 }
 
 template<typename ntupleType> bool antitagSR_photon(ntupleType* ntuple, int i){
     if( ntuple->JetsAK8Clean_doubleBDiscriminator->size() <= i || 
-        ntuple->JetsAK8Clean_prunedMass->size() <= i ) return false;
+        ntuple->JetsAK8Clean_softDropMass->size() <= i ) return false;
     return ( ntuple->JetsAK8Clean_NsubjettinessTau2->at(i)/ntuple->JetsAK8Clean_NsubjettinessTau1->at(i) < tau21Cut && 
-             ( ntuple->JetsAK8Clean_prunedMass->at(i) > ZmassWindowLow &&
-               ntuple->JetsAK8Clean_prunedMass->at(i) < ZmassWindowHigh ) );
+             ( ntuple->JetsAK8Clean_softDropMass->at(i) > ZmassWindowLow &&
+               ntuple->JetsAK8Clean_softDropMass->at(i) < ZmassWindowHigh ) );
 }
 
 template<typename ntupleType> bool antitagSB_photon(ntupleType* ntuple, int i){
     if( ntuple->JetsAK8Clean_doubleBDiscriminator->size() <= i || 
-        ntuple->JetsAK8Clean_prunedMass->size() <= i ) return false;
+        ntuple->JetsAK8Clean_softDropMass->size() <= i ) return false;
     return ( ntuple->JetsAK8Clean_NsubjettinessTau2->at(i)/ntuple->JetsAK8Clean_NsubjettinessTau1->at(i) < tau21Cut &&
              (
-              ( ntuple->JetsAK8Clean_prunedMass->at(i) < ZmassWindowLow &&
-                ntuple->JetsAK8Clean_prunedMass->at(i) > baselineMassLow ) ||
-              ( ntuple->JetsAK8Clean_prunedMass->at(i) > ZmassWindowHigh &&
-                ntuple->JetsAK8Clean_prunedMass->at(i) < baselineMassHigh ) 
+              ( ntuple->JetsAK8Clean_softDropMass->at(i) < ZmassWindowLow &&
+                ntuple->JetsAK8Clean_softDropMass->at(i) > baselineMassLow ) ||
+              ( ntuple->JetsAK8Clean_softDropMass->at(i) > ZmassWindowHigh &&
+                ntuple->JetsAK8Clean_softDropMass->at(i) < baselineMassHigh ) 
               )
              );
 }
@@ -1626,6 +1611,21 @@ template<typename ntupleType> int getClosestGenZ(ntupleType* ntuple, double jete
 
 template<typename ntupleType>double ResolutionSmear(ntupleType* ntuple, int j,unsigned int seed, bool SFUp=false){
     TRandom3 rand(seed);
+    TString sample = ntuple->fChain->GetFile()->GetName();
+    double sigmaJMR=0.0;
+    double sigmaJMRSF=1.0;
+    if(sample.Contains("MC2016")){
+	//sigmaJMAR=0.0094; JMR/JEC SF are both 1.0
+    }
+    if(sample.Contains("MC2017")){
+	//sigmaJMAR=0.0094;
+
+    }
+    double gausSmear=rand.Gaus(0, sigmaJMR)*sqrt((sigmaJMRSF*sigmaJMRSF -1));
+    double smearmass=(gausSmear+1.)*ntuple->JetsAK8_softDropMass->at(j);
+    return smearmass;
+ 
+/*
     double sigmaJMR=0;
     if(ntuple->JetsAK8_NumBhadrons->at(j)!=2)return ntuple->JetsAK8_softDropMass->at(j);
     if(ntuple->JetsAK8->at(j).Pt()>300. && ntuple->JetsAK8->at(j).Pt()<=600.)sigmaJMR=12.55;
@@ -1647,6 +1647,7 @@ template<typename ntupleType>double ResolutionSmear(ntupleType* ntuple, int j,un
     double gausSmear=rand.Gaus(0, sigmaJMR)*sqrt((sigmaJMRSF*sigmaJMRSF -1));
     double smearmass=(gausSmear+1.)*ntuple->JetsAK8_softDropMass->at(j);
     return smearmass;
+*/
 }
 template<typename ntupleType>double SignalISRCorrection(ntupleType* ntuple){
     float ISRWeights[7]={1.0, 0.920, 0.821, 0.715, 0.662, 0.561,0.511};
