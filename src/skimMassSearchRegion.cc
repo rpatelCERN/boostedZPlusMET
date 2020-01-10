@@ -336,7 +336,10 @@ if(reg == skimSamples::kSignal ){
 	    if( Era=="MC2017")prefireweight=ntuple->NonPrefiringProb;
 	     trigWeight=trigcorror.GetCorrection(ntuple->MHT,trigunc)*trigcorrorHT.GetCorrection(ntuple->HT,trigunc);
 	    double isrweight=SignalISRCorrection(ntuple);	    
-	    weight=isrweight*ntuple->Weight*lumi*prefireweight*trigWeight/0.25;
+            int nSigEvents=skims.NSignalEvents[iSample];   
+	    //std::cout<<"NEvents "<<nSigEvents<<std::endl;
+	    weight=isrweight*ntuple->Weight*lumi*prefireweight*trigWeight/(0.25*nSigEvents);
+	    //weight=isrweight*ntuple->Weight*lumi*prefireweight*trigWeight/(0.25);
             Weight=weight;
 	    HT=ntuple->HT;
 	    MET=ntuple->MET;

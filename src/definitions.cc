@@ -1648,7 +1648,10 @@ template<typename ntupleType>double ResolutionSmear(ntupleType* ntuple, int j,un
 */
 }
 template<typename ntupleType>double SignalISRCorrection(ntupleType* ntuple){
+    TString sample = ntuple->fChain->GetFile()->GetName();
     float ISRWeights[7]={1.0, 0.920, 0.821, 0.715, 0.662, 0.561,0.511};
+    float ISRWeightsCP2[7]={1.0, 0.914,0.796, 0.698, 0.602,0.579, 0.580};
+    if(sample.Contains("MC2016")){
     if(ntuple->NJetsISR==0) return ISRWeights[0];
     if(ntuple->NJetsISR==1) return ISRWeights[1];
     if(ntuple->NJetsISR==2) return ISRWeights[2];
@@ -1656,5 +1659,15 @@ template<typename ntupleType>double SignalISRCorrection(ntupleType* ntuple){
     if(ntuple->NJetsISR==4) return ISRWeights[4];
     if(ntuple->NJetsISR==5) return ISRWeights[5];
     if(ntuple->NJetsISR>=6) return ISRWeights[6];
-}
+    }
+    if(sample.Contains("MC2017") || sample.Contains("MC2018")){
+    if(ntuple->NJetsISR==0) return ISRWeightsCP2[0];
+    if(ntuple->NJetsISR==1) return ISRWeightsCP2[1];
+    if(ntuple->NJetsISR==2) return ISRWeightsCP2[2];
+    if(ntuple->NJetsISR==3) return ISRWeightsCP2[3];
+    if(ntuple->NJetsISR==4) return ISRWeightsCP2[4];
+    if(ntuple->NJetsISR==5) return ISRWeightsCP2[5];
+    if(ntuple->NJetsISR>=6) return ISRWeightsCP2[6];
 
+   }
+}
