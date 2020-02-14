@@ -1,5 +1,6 @@
 #include "TLorentzVector.h"
 #include "TRandom3.h"
+#include "ISRCorrector.h"
 // constants
 // ==============================================
 const double bbtagCut = 0.3;
@@ -20,6 +21,10 @@ TH1F* WJets_LO = (TH1F*) NLOWeightFile->Get("WJets_LO/inv_pt");
 TH1F* ZJets_NLO = (TH1F*) NLOWeightFile->Get("ZJets_01j_NLO/nominal");
 TH1F* ZJets_LO = (TH1F*) NLOWeightFile->Get("ZJets_LO/inv_pt");
 // ==============================================
+TFile* isrfile = new TFile("../data/ISRWeights.root","READ");
+TH1* h_isr = (TH1*)isrfile->Get("isr_weights_central");
+//TH1* h_isr = (TH1*)isrfile->Get("isr_weights_up");
+ISRCorrector isrcorr;
 
 double CalcdPhi( double phi1 , double phi2 ){
 
@@ -1610,44 +1615,42 @@ template<typename ntupleType> int getClosestGenZ(ntupleType* ntuple, double jete
 template<typename ntupleType>double ResolutionSmear(ntupleType* ntuple, int j,unsigned int seed, bool SFUp=false){
     TRandom3 rand(seed);
     TString sample = ntuple->fChain->GetFile()->GetName();
-    double sigmaJMR=0.0;
-    double sigmaJMRSF=1.0;
-    if(sample.Contains("MC2016")){
+    double sigmaJMRSF= 1.0;
+   //MC Resolutions 
+   double MCRes=10;
+   //measured MC Z-resolution
+   if(ntuple->JetsAK8->at(j).Pt()>200. && ntuple->JetsAK8->at(j).Pt()<=400.)MCRes=13.24;
+   if(ntuple->JetsAK8->at(j).Pt()>400. && ntuple->JetsAK8->at(j).Pt()<=600.)MCRes=11.14;
+   if(ntuple->JetsAK8->at(j).Pt()>600. && ntuple->JetsAK8->at(j).Pt()<=800.)MCRes= 10.05;
+   if(ntuple->JetsAK8->at(j).Pt()>800.)MCRes=9.03;
+   MCRes=MCRes/85.;//relative mass resolution 
+   if(sample.Contains("MC2016")){
 	//sigmaJMAR=0.0094; JMR/JEC SF are both 1.0
+    	sigmaJMRSF= 1.0;
+	if(SFUp){
+	  sigmaJMRSF=sigmaJMRSF+0.0094; 
+        }
     }
     if(sample.Contains("MC2017")){
-	//sigmaJMAR=0.0094;
+    	sigmaJMRSF= 1.092;
+	if(SFUp){
+	  sigmaJMRSF=sigmaJMRSF+0.039;
+        }
 
     }
-    double gausSmear=rand.Gaus(0, sigmaJMR)*sqrt((sigmaJMRSF*sigmaJMRSF -1));
+    if(sample.Contains("MC2018")){
+    	sigmaJMRSF=1.108;
+	if(SFUp){
+	  sigmaJMRSF=sigmaJMRSF+0.034 ;
+        }
+    }
+    double gausSmear=rand.Gaus(0, MCRes)*sqrt((sigmaJMRSF*sigmaJMRSF  )-1);
     double smearmass=(gausSmear+1.)*ntuple->JetsAK8_softDropMass->at(j);
     return smearmass;
  
-/*
-    double sigmaJMR=0;
-    if(ntuple->JetsAK8_NumBhadrons->at(j)!=2)return ntuple->JetsAK8_softDropMass->at(j);
-    if(ntuple->JetsAK8->at(j).Pt()>300. && ntuple->JetsAK8->at(j).Pt()<=600.)sigmaJMR=12.55;
-    if(ntuple->JetsAK8->at(j).Pt()>600. && ntuple->JetsAK8->at(j).Pt()<=800.)sigmaJMR=10.24;
-    if(ntuple->JetsAK8->at(j).Pt()>800. && ntuple->JetsAK8->at(j).Pt()<=1000.)sigmaJMR= 9.85;
-    if(ntuple->JetsAK8->at(j).Pt()>1000.)sigmaJMR=9.44;
-    sigmaJMR=sigmaJMR/110.;
-    double sigmaJMRSF=1.23;
-    if(SFUp)sigmaJMRSF=sigmaJMRSF-0.18;
-    double dRHiggs=getClosestGenHiggses(ntuple, ntuple->JetsAK8->at(j).Eta(), ntuple->JetsAK8->at(j).Phi());
-    double dRZ=getClosestGenZ(ntuple, ntuple->JetsAK8->at(j).Eta(), ntuple->JetsAK8->at(j).Phi());
-    if(dRHiggs>dRZ){
-        if(ntuple->JetsAK8->at(j).Pt()>300. && ntuple->JetsAK8->at(j).Pt()<=600.)sigmaJMR=8.27;
-        if(ntuple->JetsAK8->at(j).Pt()>600. && ntuple->JetsAK8->at(j).Pt()<=800.)sigmaJMR=7.13;
-        if(ntuple->JetsAK8->at(j).Pt()>800. && ntuple->JetsAK8->at(j).Pt()<=1000.)sigmaJMR=6.83;
-        if(ntuple->JetsAK8->at(j).Pt()>1000.)sigmaJMR=6.90;
-        sigmaJMR=sigmaJMR/83.;
-    }
-    double gausSmear=rand.Gaus(0, sigmaJMR)*sqrt((sigmaJMRSF*sigmaJMRSF -1));
-    double smearmass=(gausSmear+1.)*ntuple->JetsAK8_softDropMass->at(j);
-    return smearmass;
-*/
 }
-template<typename ntupleType>double SignalISRCorrection(ntupleType* ntuple){
+template<typename ntupleType>double SignalISRCorrection(ntupleType* ntuple,TH1* h_njetsisr){
+/*
     TString sample = ntuple->fChain->GetFile()->GetName();
     float ISRWeights[7]={1.0, 0.920, 0.821, 0.715, 0.662, 0.561,0.511};
     float ISRWeightsCP2[7]={1.0, 0.914,0.796, 0.698, 0.602,0.579, 0.580};
@@ -1660,14 +1663,14 @@ template<typename ntupleType>double SignalISRCorrection(ntupleType* ntuple){
     if(ntuple->NJetsISR==5) return ISRWeights[5];
     if(ntuple->NJetsISR>=6) return ISRWeights[6];
     }
-    if(sample.Contains("MC2017") || sample.Contains("MC2018")){
-    if(ntuple->NJetsISR==0) return ISRWeightsCP2[0];
-    if(ntuple->NJetsISR==1) return ISRWeightsCP2[1];
-    if(ntuple->NJetsISR==2) return ISRWeightsCP2[2];
-    if(ntuple->NJetsISR==3) return ISRWeightsCP2[3];
-    if(ntuple->NJetsISR==4) return ISRWeightsCP2[4];
-    if(ntuple->NJetsISR==5) return ISRWeightsCP2[5];
-    if(ntuple->NJetsISR>=6) return ISRWeightsCP2[6];
+*/
+TH1*h_weights = (TH1*)h_isr->Clone();
+double A_LO = h_njetsisr->Integral(0,h_njetsisr->GetNbinsX()+1);
+TH1* h_njetsisrW = (TH1*)h_njetsisr->Clone();
+h_njetsisrW->Multiply(h_weights);
+double A_NLO = h_njetsisrW->Integral(0,h_njetsisrW->GetNbinsX()+1);
+h_weights->Scale(A_LO/A_NLO);
+if(ntuple->NJetsISR>0) return h_weights->GetBinContent(ntuple->NJetsISR);
+return 1;
 
-   }
 }

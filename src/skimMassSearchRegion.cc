@@ -316,6 +316,9 @@ if(reg == skimSamples::kSignal ){
         bool passBaseline;
         double jetMass1,jetMass2;
         TString filename;
+    	TString sample = ntuple->fChain->GetFile()->GetName();
+	TFile*fin_ISR=TFile::Open(sample,"READ");
+	TH1* h_njetsisr = (TH1*)fin_ISR->Get("NJetsISR");
     for( int iEvt = 0 ; iEvt < min(options.MAX_EVENTS,numEvents) ; iEvt++ ){
     //  for( int iEvt = 0 ; iEvt <1000; iEvt++ ){
             ntuple->GetEntry(iEvt);
@@ -335,7 +338,7 @@ if(reg == skimSamples::kSignal ){
 	    double prefireweight=1.0;
 	    if( Era=="MC2017")prefireweight=ntuple->NonPrefiringProb;
 	     trigWeight=trigcorror.GetCorrection(ntuple->MHT,trigunc)*trigcorrorHT.GetCorrection(ntuple->HT,trigunc);
-	    double isrweight=SignalISRCorrection(ntuple);	    
+	    double isrweight=SignalISRCorrection(ntuple,h_njetsisr);//SignalISRCorrection(ntuple);	    
             int nSigEvents=skims.NSignalEvents[iSample];   
 	    //std::cout<<"NEvents "<<nSigEvents<<std::endl;
 	    weight=isrweight*ntuple->Weight*lumi*prefireweight*trigWeight/(0.25*nSigEvents);
@@ -351,14 +354,16 @@ if(reg == skimSamples::kSignal ){
             JetEta1=ntuple->JetsAK8->at(0).Eta();  
             JetPhi1=ntuple->JetsAK8->at(0).Phi();  
             JetPt1=ntuple->JetsAK8->at(0).Pt();  
-	    PrunedMass1=ntuple->JetsAK8_softDropMass->at(0);
+	    double smear=ResolutionSmear(ntuple,0,iEvt, false);
+	    PrunedMass1=smear;//ntuple->JetsAK8_softDropMass->at(0);
 	   Jet1_tau2overtau1=ntuple->JetsAK8_NsubjettinessTau2->at(0)/ntuple->JetsAK8_NsubjettinessTau1->at(0);
 	   }
 	    if(nAK8>1){
             JetEta2=ntuple->JetsAK8->at(1).Eta();  
             JetPhi2=ntuple->JetsAK8->at(1).Phi();
             JetPt2=ntuple->JetsAK8->at(1).Pt();
-	    PrunedMass2=ntuple->JetsAK8_softDropMass->at(1);
+	    double smear=ResolutionSmear(ntuple,1,iEvt, false);
+	    PrunedMass2=smear;//ntuple->JetsAK8_softDropMass->at(1);
 	    Jet2_tau2overtau1=ntuple->JetsAK8_NsubjettinessTau2->at(1)/ntuple->JetsAK8_NsubjettinessTau1->at(1);
 	    }
 	std::vector<unsigned int >ZBosonIndex;
@@ -375,6 +380,7 @@ if(reg == skimSamples::kSignal ){
         newtree->Fill();
 	}
         outputFile->cd();
+	fin_ISR->Close();
         newtree->Write(skims.signalSampleName[iSample]);
    }
 }
