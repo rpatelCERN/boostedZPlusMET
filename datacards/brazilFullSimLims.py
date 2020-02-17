@@ -44,41 +44,28 @@ def ExtractFile(iname, tag):
 
 if __name__ == '__main__':
 
-	#idir = "/eos/uscms/store/user/ntran/SUSY/statInterp/scanOutput/Dec6";
-	#idir = "/uscms_data/d2/rgp230/BoostedHPush/NewCommit/CMSSW_7_4_2/src/boostedHiggsPlusMET/datacardsRateParamTest/";
 	idir = "./";
-	results = [];
-	#results.append( ExtractFile(idir+'/results_T2tt_175_1_mu0.0.root','175') );
-	results.append( ExtractFile(idir+'/higgsCombineUnblindingT5HZ750.Asymptotic.mH120.root','750') );
-	results.append( ExtractFile(idir+'/higgsCombineUnblindingT5HZ1000.Asymptotic.mH120.root','1000') );
-	results.append( ExtractFile(idir+'/higgsCombineUnblindingT5HZ1100.Asymptotic.mH120.root','1100') );
-	results.append( ExtractFile(idir+'/higgsCombineUnblindingT5HZ1200.Asymptotic.mH120.root','1200') );
-	results.append( ExtractFile(idir+'/higgsCombineUnblindingT5HZ1300.Asymptotic.mH120.root','1300') );
-	results.append( ExtractFile(idir+'/higgsCombineUnblindingT5HZ1400.Asymptotic.mH120.root','1400') );
-	results.append( ExtractFile(idir+'/higgsCombineUnblindingT5HZ1500.Asymptotic.mH120.root','1500') );
-	results.append( ExtractFile(idir+'/higgsCombineUnblindingT5HZ1600.Asymptotic.mH120.root','1600') );
-	results.append( ExtractFile(idir+'/higgsCombineUnblindingT5HZ1700.Asymptotic.mH120.root','1700') );
-	results.append( ExtractFile(idir+'/higgsCombineUnblindingT5HZ1800.Asymptotic.mH120.root','1800') );
-	results.append( ExtractFile(idir+'/higgsCombineUnblindingT5HZ1900.Asymptotic.mH120.root','1900') );
-	results.append( ExtractFile(idir+'/higgsCombineUnblindingT5HZ2000.Asymptotic.mH120.root','2000') );
-	results.append( ExtractFile(idir+'/higgsCombineUnblindingT5HZ2100.Asymptotic.mH120.root','2100') );
-	#results.append( ExtractFile(idir+'/results_T1bbbb_1000_800.root','T1bbbb1000') );
-	#results.append( ExtractFile(idir+'/results_T1tttt_1500_100.root','T1tttt1500') );
-	# results.append( ExtractFile(idir+'/results_T1tttt_1200_800.root','T1tttt1200') );
-	#results.append( ExtractFile(idir+'/results_T1tttt_1200_800.root','T1tttt1200') );
-	#results.append( ExtractFile(idir+'/results_T1qqqq_1400_100.root','T1qqqq1400') );
-	#results.append( ExtractFile(idir+'/results_T1qqqq_1000_900.root','T1qqqq1000') );
-
-	# results.append( ExtractFile(idir+'/results_T1bbbb_1500_100.root','T1bbbb1500') );
-	# results.append( ExtractFile(idir+'/results_T1bbbb_1000_100.root','T1bbbb1000') );
-	# #results.append( ExtractFile(idir+'/results_T1tttt_1500_100.root','T1tttt1500') );
-	# results.append( ExtractFile(idir+'/results_T1tttt_1500_800.root','T1tttt1200') );
-	# results.append( ExtractFile(idir+'/results_T1tttt_1200_800.root','T1tttt1200') );
-	# results.append( ExtractFile(idir+'/results_T1qqqq_1400_800.root','T1qqqq1400') );
-	# results.append( ExtractFile(idir+'/results_T1qqqq_1000_800.root','T1qqqq1000') );
-	xsecs=[2.26585, 0.325388 , 0.163491, 0.0856418, 0.0460525, 0.0252977, 0.0141903, 0.00810078, 0.00470323, 0.00276133, 0.00163547, 0.000981077,0.000591918]
-	#xsecs=[64.5085,36.3818,21.5949,13.3231,8.51615,5.60471,3.78661,2.61162,1.83537,1.31169,0.948333,0.697075,0.51848,0.390303,0.296128,0.226118,0.174599,0.136372,0.107045];
-	#xsecs=[64.5085,36.3818,21.5949,13.3231,8.51615,5.60471,3.78661,2.61162,1.83537,1.31169,0.948333,0.697075,0.51848,0.390303,0.296128,0.226118,0.174599,0.136372,0.107045];
+	results = [];			  
+	#results.append( ExtractFile(idir+'/higgsCombineT5ZZ750.Asymptotic.mH750.root','750') );
+	results.append( ExtractFile(idir+'/higgsCombineT5ZZ1000.txt.Asymptotic.mH1000.root','1000') );
+	results.append( ExtractFile(idir+'/higgsCombineT5ZZ1100.txt.Asymptotic.mH1100.root','1100') );
+	results.append( ExtractFile(idir+'/higgsCombineT5ZZ1200.txt.Asymptotic.mH1200.root','1200') );
+	results.append( ExtractFile(idir+'/higgsCombineT5ZZ1300.txt.Asymptotic.mH1300.root','1300') );
+	results.append( ExtractFile(idir+'/higgsCombineT5ZZ1400.txt.Asymptotic.mH1400.root','1400') );
+	results.append( ExtractFile(idir+'/higgsCombineT5ZZ1500.txt.Asymptotic.mH1500.root','1500') );
+	results.append( ExtractFile(idir+'/higgsCombineT5ZZ1600.txt.Asymptotic.mH1600.root','1600') );
+	results.append( ExtractFile(idir+'/higgsCombineT5ZZ1700.txt.Asymptotic.mH1700.root','1700') );
+	results.append( ExtractFile(idir+'/higgsCombineT5ZZ1800.txt.Asymptotic.mH1800.root','1800') );
+	results.append( ExtractFile(idir+'/higgsCombineT5ZZ1900.txt.Asymptotic.mH1900.root','1900') );
+	results.append( ExtractFile(idir+'/higgsCombineT5ZZ2000.txt.Asymptotic.mH2000.root','2000') );
+	results.append( ExtractFile(idir+'/higgsCombineT5ZZ2100.txt.Asymptotic.mH2100.root','2100') );
+	results.append( ExtractFile(idir+'/higgsCombineT5ZZ2200.txt.Asymptotic.mH2200.root','2200') );
+	results.append( ExtractFile(idir+'/higgsCombineT5ZZ2300.txt.Asymptotic.mH2300.root','2300') );
+	results.append( ExtractFile(idir+'/higgsCombineT5ZZ2400.txt.Asymptotic.mH2400.root','2400') );
+	results.append( ExtractFile(idir+'/higgsCombineT5ZZ2500.txt.Asymptotic.mH2500.root','2500') );
+	#xsecs=[2.26585, 0.325388 , 0.163491, 0.0856418, 0.0460525, 0.0252977, 0.0141903, 0.00810078, 0.00470323, 0.00276133, 0.00163547, 0.000981077,0.000591918]
+	xsecs=[0.385,0.191,0.0985,0.0522,0.0284,0.0157,0.00887,0.00507,0.00293,0.00171,0.00101,0.000598,0.000356,0.000213,0.000128,0.0000768]
+	#xsecs=[0.325388 , 0.163491, 0.0856418, 0.0460525, 0.0252977, 0.0141903, 0.00810078, 0.00470323, 0.00276133, 0.00163547, 0.000981077,0.000591918]
 	names   = [];
 	l_obs   = [];
 	l_m2sig = [];
@@ -95,6 +82,7 @@ if __name__ == '__main__':
 		l_p1sig.append(r[4]*xsecs[count]);
 		l_p2sig.append(r[5]*xsecs[count]);
 		l_obs.append(r[6]*xsecs[count]);
+		
 		count=count+1
 	print "l_exp = ", l_exp
 	print "l_obs = ", l_obs
@@ -129,8 +117,8 @@ if __name__ == '__main__':
 
 	#print g_2sig;
 
-	can = ROOT.TCanvas("can","can",1400,1000);
-	hrl = ROOT.TH1F("hrl","hrl",27,750,2100);
+	can = ROOT.TCanvas("can","can",1200,1000);
+	hrl = ROOT.TH1F("hrl","hrl",30,1000,2500);
 	# hrl = can.DrawFrame(0,0,6,15);
 	hrl.GetYaxis().SetTitle("95% CL Upper limit on #sigma_{signal} [pb] ");
 	hrl.GetXaxis().SetTitle("M_{#tilde{g}} [GeV]");
@@ -144,27 +132,38 @@ if __name__ == '__main__':
 	#hrl.GetXaxis().SetBinLabel(5,names[4])
 	#hrl.GetXaxis().SetBinLabel(6,names[5])
 	hrl.SetMaximum(0.1);
+	hrl.SetMinimum(0.0002);
 	hrl.Draw();
 
 	can.SetGrid(); 
 	can.SetLogy();
-	txta = ROOT.TLatex(0.65,0.90,"CMS");
+	hrl.GetXaxis().SetRangeUser(1300,2500);
+        hrl.SetMinimum(0.0001);
+	txta = ROOT.TLatex(0.65,0.905,"CMS");
 	txta.SetNDC();
-	txtb = ROOT.TLatex(0.75,0.90,"Preliminary");
+	txtb = ROOT.TLatex(0.75,0.905,"Preliminary");
 	txtb.SetNDC(); txtb.SetTextFont(52);
-	txtc = ROOT.TLatex(0.75,0.96,"35.9 fb^{-1} (13 TeV)");
+	
+	txtc = ROOT.TLatex(0.75,0.96,"137 fb^{-1} (13 TeV)");
 	txtc.SetNDC(); txtc.SetTextFont(42); txtc.SetTextSize(0.04);
-	txtd = ROOT.TLatex(0.65,0.85,"#tilde{#chi}^{2}_{0}#rightarrow Z, #tilde{#chi}^{2}_{0}#rightarrow h");
+	txtd = ROOT.TLatex(0.65,0.85,"#tilde{#chi}^{2}_{0}#rightarrow Z #tilde{#chi}^{1}_{0}, #tilde{#chi}^{2}_{0}#rightarrow Z #tilde{#chi}^{1}_{0}");
 	txtd.SetNDC(); txtd.SetTextFont(42); txtd.SetTextSize(0.05);
-	f=open("LatestXsecGluGlu.txt", 'r')
+	f=open("LatestGluGluNNLO.txt", 'r')
 	a_stop = array('d', []);
 	a_xsec = array('d', []);
+	a_xsecUP = array('d', []);
+	a_xsecDown = array('d', []);
 	for line in f:
 		parse=line.split("|")
 		a_stop.append(float(parse[1]));
 		a_xsec.append(float(parse[2]))
+                a_xsecUP.append(float(parse[2])+(float(parse[2])*float(parse[3])/100.))
+                a_xsecDown.append(float(parse[2])-(float(parse[2])*float(parse[3])/100.))
 	g_xsec=ROOT.TGraph(len(a_stop), a_stop, a_xsec)
-	leg = ROOT.TLegend(0.20,0.15,0.4,0.35);
+        g_xsecSup=ROOT.TGraph(len(a_stop), a_stop, a_xsecUP)
+        g_xsecSdn=ROOT.TGraph(len(a_stop), a_stop, a_xsecDown)
+	#leg = ROOT.TLegend(0.20,0.15,0.35,0.30);
+	leg = ROOT.TLegend(0.6510851,0.6020806,0.9499165,0.8062419);
 	leg.SetFillStyle(1001);
 	leg.SetFillColor(0);    
 	leg.SetBorderSize(1);  
@@ -189,18 +188,36 @@ if __name__ == '__main__':
 	g_2sig.Draw('f');
 	g_1sig.Draw('fsames');
 	#g_1sig.Draw('f');
-	g_obs.Draw('lsames');
+	#g_obs.Draw('lsames');
 	g_exp.Draw('lsames');
 	for i in range(0,100):
-		print "Mass %d  Exp Excl %g " %(1800+i,g_exp.Eval(1800+i))
-		print "Theory Xsec %g " %g_xsec.Eval(1800+i)
+		#print "Mass %d  Exp Excl %g " %(2000+i,g_exp.Eval(2000+i))
+		#print "Theory Xsec %g " %g_xsec.Eval(2000+i)
+		if(g_exp.Eval(2000+i)<g_xsec.Eval(2000+i)):print "Mass %d" %(2000+i)
 	#oneLine.Draw("LSAMES");
 	txta.Draw();
 	txtb.Draw();
 	txtc.Draw();
 	txtd.Draw();	
 	leg.Draw();
-	g_xsec.SetLineStyle(2);
+	g_xsecSdn.SetLineStyle(2);
+	g_xsecSup.SetLineStyle(2);
+	g_xsec.SetLineStyle(1);
+	g_xsecSup.SetLineColor(ROOT.kBlue);
+	g_xsecSdn.SetLineColor(ROOT.kBlue);
 	g_xsec.SetLineColor(ROOT.kBlue);
 	g_xsec.Draw("lsame")
-	can.SaveAs('brazilT5HZResults.pdf');
+	g_xsecSup.Draw("lsame")
+	g_xsecSdn.Draw("lsame")
+	can.SaveAs('T5ZZCombResults.pdf');
+	#can.SaveAs('T5ZZCombResults.C');
+	fout=ROOT.TFile("BoostedZPlots.root","RECREATE")
+        g_xsec.Write("GluinoTheoryXsec");
+        g_xsecSup.Write("GluinoTheoryXsecSigmaUp");
+        g_xsecSdn.Write("GluinoTheoryXsecSigmaDn");
+        g_exp.Write("ExpectedLimit");
+        g_obs.Write("ObservedLimit");
+        g_2sig.Write("ExpectedLimitTwoSigmaBand"); 
+        g_1sig.Write("ExpectedLimitSigmaBand"); 
+        hrl.Write("CombResult");
+
