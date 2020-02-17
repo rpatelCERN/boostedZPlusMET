@@ -188,7 +188,7 @@ if __name__ == '__main__':
 	g_2sig.Draw('f');
 	g_1sig.Draw('fsames');
 	#g_1sig.Draw('f');
-	#g_obs.Draw('lsames');
+	g_obs.Draw('lsames');
 	g_exp.Draw('lsames');
 	for i in range(0,100):
 		#print "Mass %d  Exp Excl %g " %(2000+i,g_exp.Eval(2000+i))
