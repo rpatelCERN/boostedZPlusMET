@@ -6,7 +6,8 @@ kmax *  number of nuisance parameters (sources of systematical uncertainties)
 ------------
 # we have 6 met channels
 bin bin1 bin2 bin3 bin4 bin5 bin6 
-observation 229.3 59.7 20.4 3.08 0.38 0.193
+observation 235 67 21 3 3 1
+#observation 229.3 59.7 20.4 3.08 0.38 0.193
 ------------
 bin             bin1 bin1 bin2 bin2 bin3 bin3 bin4 bin4 bin5 bin5 bin6 bin6
 process         sig  bkg  sig  bkg  sig  bkg  sig  bkg  sig  bkg sig bkg
@@ -16,11 +17,13 @@ rate           sig1 229.3 sig2 59.7  sig3 20.4 sig4 3.08 sig5 0.38 sig6 0.193
 lumi lnN 1.0243 - 1.0243 - 1.0243 - 1.0243 - 1.0243 - 1.0243 - 
 IsoTrack lnN 1.02 - 1.02 - 1.02 - 1.02 - 1.02 - 1.02 - 
 TrigSyst lnN 1.02 - 1.02 -  1.02 - 1.02 -  1.02 - 1.02 - 
-ISRSys lnN isr - isr - isr - isr - isr - isr -
-SignalStat lnN - stat - - - - - - - - - -
-SignalJEC lnN - JEC - JEC - JEC - JEC - JEC - JEC
-SignalJER lnN - JER - JER - JER - JER - JER - JER
-SignalRes lnN - RES - RES - RES - RES - RES - RES
+ISRSys lnN 
+SignalStat lnN
+SignalJEC lnN
+SignalJER lnN 
+SignalRes lnN 
+SignalPrefire lnN 
+SignalScale lnN
 MassShapeUncStat lnN - 1.0101 - 1.0101 - 1.0101 - 1.0101 - 1.0101 - 1.0101
 MassShapeUncSys lnN - 1.042 - 1.042 - 1.042 - 1.042 - 1.042 - 1.042
 METUncStat1 lnN - 1.029 - - - - - - - - - -
@@ -28,7 +31,7 @@ METUncStat2 lnN - - - 1.057 - - - - - - - -
 METUncStat3 lnN - - - - - 1.097 - - - - - -
 METUncStat4 lnN - - - - - - - 1.25 - - - -
 METUncStat5 lnN - - - - - - - - - 1.72 - -
-PoisMETUncStat6 gmN 1 - - - - - - - - - - - 0.19
-METShapeClosure lnN - 1.04 - 1.01 - 0.92 - 0.91 - 0.8 - 0.8
+PoisMETUncStat6 gmN 1 - - - - - - - - - - - 0.193
+METShapeClosure lnN - 1.03 - 1.01 - 1.01 - 1.04 - 0.81 - 0.84
 METShapeValidationTTWJets lnN - 1.03 - 0.98 - 0.95 - 0.92 - 0.91  - 0.9
 METShapeValidationZJets lnN - 1.04 -  1.0 -  0.932 - 0.85 - 0.760 - 0.714

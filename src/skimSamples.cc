@@ -89,8 +89,8 @@ public :
             Other->Add(skimTypeMC+"/"+OtherFileNames[i]+Era+".root");
         }
         if( r == kSignal || r == kSLm || r == kSLe || r == kLowDphi || r == kPhoton ){
-            ntuples.push_back(new RA2bTree(Other));
-            sampleName.push_back("Other");
+            //ntuples.push_back(new RA2bTree(Other));
+            //sampleName.push_back("Other");
             fillColor.push_back(kRed+1);
             lineColor.push_back(1);
         }
@@ -108,8 +108,8 @@ public :
             ZJets->Add(skimTypeMC+"/"+ZJetsFileNames[i]+Era+".root");
         }
         if( r == kSignal || r == kLowDphi ){ 
-            ntuples.push_back(new RA2bTree(ZJets));
-            sampleName.push_back("ZJets");
+            //ntuples.push_back(new RA2bTree(ZJets));
+            //sampleName.push_back("ZJets");
             fillColor.push_back(kGreen+1);
             lineColor.push_back(1);
         }
@@ -145,7 +145,7 @@ public :
         }
         if( r == kSignal || r == kSLm || r == kSLe ){
            // ntuples.push_back(new RA2bTree(SnglT));
-           // sampleName.push_back("SnglT");
+            //sampleName.push_back("SnglT");
             fillColor.push_back(kOrange);
             lineColor.push_back(1);
         }
@@ -170,8 +170,8 @@ public :
             TT->Add(skimTypeMC+"/"+TTFileNames[i]+Era+".root");
         }
         if( r == kSignal || r == kSLm || r == kSLe || r == kLowDphi ){
-           ntuples.push_back(new RA2bTree(TT));
-            sampleName.push_back("TT");
+           //ntuples.push_back(new RA2bTree(TT));
+           // sampleName.push_back("TT");
             fillColor.push_back(kCyan);
             lineColor.push_back(kCyan);
         }
@@ -226,8 +226,8 @@ public :
             QCD->Add(skimTypeMC+"/"+QCDFileNames[i]+Era+".root");
         }
         if( r == kSignal || r == kPhoton || r == kLowDphi ){
-            ntuples.push_back(new RA2bTree(QCD));
-            sampleName.push_back("QCD");
+            //ntuples.push_back(new RA2bTree(QCD));
+            //sampleName.push_back("QCD");
             fillColor.push_back(kGray);
             lineColor.push_back(1);
         }
@@ -288,7 +288,7 @@ public :
                 data2018->Add(skimType+"/"+METFileNames[i]);
             }    
             dataNtuple = new RA2bTree(data2018);
-	    ntuples.push_back(dataNtuple);
+	    ntuples.push_back(dataNtuple);	    
 	    sampleName.push_back("data2018"); 
 	    fillColor.push_back(kWhite);
 	    lineColor.push_back(1);
@@ -456,6 +456,7 @@ public :
             fillColor.push_back(kBlack);
             lineColor.push_back(1);
         }
+/*
         T5HH1000 = new TChain("tree");
         T5HH1100 = new TChain("tree");
         T5HH1200 = new TChain("tree");
@@ -472,25 +473,25 @@ public :
         T5HH2300 = new TChain("tree");
         T5HH2400 = new TChain("tree");
         T5HH2500 = new TChain("tree");
-	TFile*fsig=TFile::Open("root://cmseos.fnal.gov//store/user/rgp230/SUSY/TChiHHV17/Skims/tree_signal/TwoZEvents/tree_signal/tree_T5qqqqZH_1000_1_"+Era+".root","READ");
+	TFile*fsig=TFile::Open("root://cmseos.fnal.gov//store/user/rgp230/SUSY/TChiHHV17/Skims/tree_signal/TwoZEvents/tree_signal_JECup/tree_T5qqqqZH_1000_1_"+Era+".root","READ");
         TH1F*temp=(TH1F*)fsig->Get("nEventProc");
 	fsig->Close();
-	T5HH1000->Add("root://cmseos.fnal.gov//store/user/rgp230/SUSY/TChiHHV17/Skims/tree_signal/TwoZEvents/tree_signal/tree_T5qqqqZH_1000_1_"+Era+".root");
-	T5HH1100->Add("root://cmseos.fnal.gov//store/user/rgp230/SUSY/TChiHHV17/Skims/tree_signal/TwoZEvents/tree_signal/tree_T5qqqqZH_1100_1_"+Era+".root");
-	T5HH1200->Add("root://cmseos.fnal.gov//store/user/rgp230/SUSY/TChiHHV17/Skims/tree_signal/TwoZEvents/tree_signal/tree_T5qqqqZH_1200_1_"+Era+".root");
-	T5HH1300->Add("root://cmseos.fnal.gov//store/user/rgp230/SUSY/TChiHHV17/Skims/tree_signal/TwoZEvents/tree_signal/tree_T5qqqqZH_1300_1_"+Era+".root");
-	T5HH1400->Add("root://cmseos.fnal.gov//store/user/rgp230/SUSY/TChiHHV17/Skims/tree_signal/TwoZEvents/tree_signal/tree_T5qqqqZH_1400_1_"+Era+".root");
-	T5HH1500->Add("root://cmseos.fnal.gov//store/user/rgp230/SUSY/TChiHHV17/Skims/tree_signal/TwoZEvents/tree_signal/tree_T5qqqqZH_1500_1_"+Era+".root");
-	T5HH1600->Add("root://cmseos.fnal.gov//store/user/rgp230/SUSY/TChiHHV17/Skims/tree_signal/TwoZEvents/tree_signal/tree_T5qqqqZH_1600_1_"+Era+".root");
-	T5HH1700->Add("root://cmseos.fnal.gov//store/user/rgp230/SUSY/TChiHHV17/Skims/tree_signal/TwoZEvents/tree_signal/tree_T5qqqqZH_1700_1_"+Era+".root");
-	T5HH1800->Add("root://cmseos.fnal.gov//store/user/rgp230/SUSY/TChiHHV17/Skims/tree_signal/TwoZEvents/tree_signal/tree_T5qqqqZH_1800_1_"+Era+".root");
-	T5HH1900->Add("root://cmseos.fnal.gov//store/user/rgp230/SUSY/TChiHHV17/Skims/tree_signal/TwoZEvents/tree_signal/tree_T5qqqqZH_1900_1_"+Era+".root");
-	T5HH2000->Add("root://cmseos.fnal.gov//store/user/rgp230/SUSY/TChiHHV17/Skims/tree_signal/TwoZEvents/tree_signal/tree_T5qqqqZH_2000_1_"+Era+".root");	
-	T5HH2100->Add("root://cmseos.fnal.gov//store/user/rgp230/SUSY/TChiHHV17/Skims/tree_signal/TwoZEvents/tree_signal/tree_T5qqqqZH_2100_1_"+Era+".root");
-	T5HH2200->Add("root://cmseos.fnal.gov//store/user/rgp230/SUSY/TChiHHV17/Skims/tree_signal/TwoZEvents/tree_signal/tree_T5qqqqZH_2200_1_"+Era+".root");
-	T5HH2300->Add("root://cmseos.fnal.gov//store/user/rgp230/SUSY/TChiHHV17/Skims/tree_signal/TwoZEvents/tree_signal/tree_T5qqqqZH_2300_1_"+Era+".root");
-	T5HH2400->Add("root://cmseos.fnal.gov//store/user/rgp230/SUSY/TChiHHV17/Skims/tree_signal/TwoZEvents/tree_signal/tree_T5qqqqZH_2400_1_"+Era+".root");
-	T5HH2500->Add("root://cmseos.fnal.gov//store/user/rgp230/SUSY/TChiHHV17/Skims/tree_signal/TwoZEvents/tree_signal/tree_T5qqqqZH_2500_1_"+Era+".root");
+	T5HH1000->Add("root://cmseos.fnal.gov//store/user/rgp230/SUSY/TChiHHV17/Skims/tree_signal/TwoZEvents/tree_signal_JECup/tree_T5qqqqZH_1000_1_"+Era+".root");
+	T5HH1100->Add("root://cmseos.fnal.gov//store/user/rgp230/SUSY/TChiHHV17/Skims/tree_signal/TwoZEvents/tree_signal_JECup/tree_T5qqqqZH_1100_1_"+Era+".root");
+	T5HH1200->Add("root://cmseos.fnal.gov//store/user/rgp230/SUSY/TChiHHV17/Skims/tree_signal/TwoZEvents/tree_signal_JECup/tree_T5qqqqZH_1200_1_"+Era+".root");
+	T5HH1300->Add("root://cmseos.fnal.gov//store/user/rgp230/SUSY/TChiHHV17/Skims/tree_signal/TwoZEvents/tree_signal_JECup/tree_T5qqqqZH_1300_1_"+Era+".root");
+	T5HH1400->Add("root://cmseos.fnal.gov//store/user/rgp230/SUSY/TChiHHV17/Skims/tree_signal/TwoZEvents/tree_signal_JECup/tree_T5qqqqZH_1400_1_"+Era+".root");
+	T5HH1500->Add("root://cmseos.fnal.gov//store/user/rgp230/SUSY/TChiHHV17/Skims/tree_signal/TwoZEvents/tree_signal_JECup/tree_T5qqqqZH_1500_1_"+Era+".root");
+	T5HH1600->Add("root://cmseos.fnal.gov//store/user/rgp230/SUSY/TChiHHV17/Skims/tree_signal/TwoZEvents/tree_signal_JECup/tree_T5qqqqZH_1600_1_"+Era+".root");
+	T5HH1700->Add("root://cmseos.fnal.gov//store/user/rgp230/SUSY/TChiHHV17/Skims/tree_signal/TwoZEvents/tree_signal_JECup/tree_T5qqqqZH_1700_1_"+Era+".root");
+	T5HH1800->Add("root://cmseos.fnal.gov//store/user/rgp230/SUSY/TChiHHV17/Skims/tree_signal/TwoZEvents/tree_signal_JECup/tree_T5qqqqZH_1800_1_"+Era+".root");
+	T5HH1900->Add("root://cmseos.fnal.gov//store/user/rgp230/SUSY/TChiHHV17/Skims/tree_signal/TwoZEvents/tree_signal_JECup/tree_T5qqqqZH_1900_1_"+Era+".root");
+	T5HH2000->Add("root://cmseos.fnal.gov//store/user/rgp230/SUSY/TChiHHV17/Skims/tree_signal/TwoZEvents/tree_signal_JECup/tree_T5qqqqZH_2000_1_"+Era+".root");	
+	T5HH2100->Add("root://cmseos.fnal.gov//store/user/rgp230/SUSY/TChiHHV17/Skims/tree_signal/TwoZEvents/tree_signal_JECup/tree_T5qqqqZH_2100_1_"+Era+".root");
+	T5HH2200->Add("root://cmseos.fnal.gov//store/user/rgp230/SUSY/TChiHHV17/Skims/tree_signal/TwoZEvents/tree_signal_JECup/tree_T5qqqqZH_2200_1_"+Era+".root");
+	T5HH2300->Add("root://cmseos.fnal.gov//store/user/rgp230/SUSY/TChiHHV17/Skims/tree_signal/TwoZEvents/tree_signal_JECup/tree_T5qqqqZH_2300_1_"+Era+".root");
+	T5HH2400->Add("root://cmseos.fnal.gov//store/user/rgp230/SUSY/TChiHHV17/Skims/tree_signal/TwoZEvents/tree_signal_JECup/tree_T5qqqqZH_2400_1_"+Era+".root");
+	T5HH2500->Add("root://cmseos.fnal.gov//store/user/rgp230/SUSY/TChiHHV17/Skims/tree_signal/TwoZEvents/tree_signal_JECup/tree_T5qqqqZH_2500_1_"+Era+".root");
       if( r == kSignal ){
             signalNtuples.push_back(new RA2bTree(T5HH1000));
             signalNtuples.push_back(new RA2bTree(T5HH1100));
@@ -508,18 +509,19 @@ public :
             signalNtuples.push_back(new RA2bTree(T5HH2300));
             signalNtuples.push_back(new RA2bTree(T5HH2400));
             signalNtuples.push_back(new RA2bTree(T5HH2500));
-        
     for( int i = 0 ; i < signalNtuples.size() ; i++ ){
-      ///      for( int i = 0 ; i < 1 ; i++ ){
+    //       for( int i = 0 ; i < 1 ; i++ ){
 		int mass=1000+100*i;
             	signalSampleName.push_back(TString::Format("T5ZZ%d" ,mass));
             	sigLineColor.push_back(kRed);
-       	        fsig=TFile::Open(TString::Format("root://cmseos.fnal.gov//store/user/rgp230/SUSY/TChiHHV17/Skims/tree_signal/TwoZEvents/tree_signal/tree_T5qqqqZH_%d_1_",mass)+Era+".root","READ");	
+       	        fsig=TFile::Open(TString::Format("root://cmseos.fnal.gov//store/user/rgp230/SUSY/TChiHHV17/Skims/tree_signal/TwoZEvents/tree_signal_JECup/tree_T5qqqqZH_%d_1_",mass)+Era+".root","READ");	
             	temp=(TH1F*)fsig->Get("nEventProc");
 		NSignalEvents.push_back(temp->GetBinContent(1));
 		fsig->Close();
 	    }
+
         }
+*/
     };
 
     RA2bTree* findNtuple(TString name){

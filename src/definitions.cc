@@ -23,7 +23,7 @@ TH1F* ZJets_LO = (TH1F*) NLOWeightFile->Get("ZJets_LO/inv_pt");
 // ==============================================
 TFile* isrfile = new TFile("../data/ISRWeights.root","READ");
 TH1* h_isr = (TH1*)isrfile->Get("isr_weights_central");
-//TH1* h_isr = (TH1*)isrfile->Get("isr_weights_up");
+//TH1* h_isr = (TH1*)isrfile->Get("isr_weights_down");
 ISRCorrector isrcorr;
 
 double CalcdPhi( double phi1 , double phi2 ){
@@ -40,6 +40,9 @@ double CalcdPhi( double phi1 , double phi2 ){
 
 template<typename ntupleType>void ntupleBranchStatus(ntupleType* ntuple){
   ntuple->fChain->SetBranchStatus("*",0);
+  ntuple->fChain->SetBranchStatus("RunNum", 1);
+  ntuple->fChain->SetBranchStatus("LumiBlockNum", 1);
+  ntuple->fChain->SetBranchStatus("EvtNum", 1);
   ntuple->fChain->SetBranchStatus("Muons",1);
   ntuple->fChain->SetBranchStatus("Electrons",1);
   ntuple->fChain->SetBranchStatus("isoElectronTracksclean",1);
@@ -68,8 +71,9 @@ ntuple->fChain->SetBranchStatus("METPhi",1);
   ntuple->fChain->SetBranchStatus("JetsAK8*",1);
   ntuple->fChain->SetBranchStatus("GenJets*",1);
   ntuple->fChain->SetBranchStatus("Jets*",1);
-  ntuple->fChain->SetBranchStatus("NonPrefiringProb",1);  
   ntuple->fChain->SetBranchStatus("Weight",1);  
+  ntuple->fChain->SetBranchStatus("NonPrefiringProb",1);  
+  ntuple->fChain->SetBranchStatus("NonPrefiringProbUp",1);  
   ntuple->fChain->SetBranchStatus("puWeightNew",1);  
   ntuple->fChain->SetBranchStatus("TrueNumInteractions",1);  
   ntuple->fChain->SetBranchStatus("TriggerPass",1);  
@@ -94,6 +98,7 @@ ntuple->fChain->SetBranchStatus("METPhi",1);
   ntuple->fChain->SetBranchStatus("LowNeutralJetFilter",1);
   ntuple->fChain->SetBranchStatus("EcalNoiseJetFilter",1);
   ntuple->fChain->SetBranchStatus("HTRatioDPhiTightFilter",1);
+  ntuple->fChain->SetBranchStatus("MuonJetFilter",1);
   ntuple->fChain->SetBranchStatus("FakeJetFilter",1);
   ntuple->fChain->SetBranchStatus("*Filter",1);
   ntuple->fChain->SetBranchStatus("GenParticles*",1);
@@ -1024,8 +1029,10 @@ template<typename ntupleType> bool FiltersCut(ntupleType* ntuple){
     }
    bool NoiseJetFilter=true;
    bool ECALBadCalib=true;
+   bool FakeJet=true; 
+   if(!sample.Contains("T5qqqqZH"))FakeJet=ntuple->FakeJetFilter;   
    if(sample.Contains("2017"))NoiseJetFilter=ntuple->EcalNoiseJetFilter;
-   if(sample.Contains("2018") || sample.Contains("2018"))ECALBadCalib=ntuple->ecalBadCalibReducedFilter;
+ //  if(sample.Contains("2018") || sample.Contains("2018"))ECALBadCalib=ntuple->ecalBadCalibReducedFilter;
     return ntuple->HBHENoiseFilter==1 && 
         ntuple->HBHEIsoNoiseFilter==1 && 
         ntuple->eeBadScFilter==1 && 
@@ -1035,7 +1042,7 @@ template<typename ntupleType> bool FiltersCut(ntupleType* ntuple){
         ntuple->BadPFMuonFilter == 1 && 
         //ntuple->BadChargedCandidateFilter == 1  
         ntuple->globalSuperTightHalo2016Filter==1 &&
-        ntuple->LowNeutralJetFilter==1 && ntuple->HTRatioDPhiTightFilter==1 && ntuple->FakeJetFilter==1 && HEMVeto && NoiseJetFilter && ECALBadCalib;	
+        ntuple->LowNeutralJetFilter==1 && ntuple->MuonJetFilter && ntuple->HTRatioDPhiTightFilter==1 && FakeJet && HEMVeto && NoiseJetFilter && ECALBadCalib;	
 }
 
 template<typename ntupleType> bool AK8MultCut(ntupleType* ntuple){
@@ -1673,4 +1680,33 @@ h_weights->Scale(A_LO/A_NLO);
 if(ntuple->NJetsISR>0) return h_weights->GetBinContent(ntuple->NJetsISR);
 return 1;
 
+}
+
+template<typename ntupleType>double XSECCorrection(ntupleType*ntuple){
+    double correction=1;
+	
+        TString sample = ntuple->fChain->GetFile()->GetName();
+	if(sample.Contains("MC2016"))return correction;
+        if(sample.Contains("ZJetsToNuNu_HT-100to200_"))correction=1.03;
+        if(sample.Contains("ZJetsToNuNu_HT-200to400_"))correction=1.12;
+        if(sample.Contains("ZJetsToNuNu_HT-400to600_"))correction=1.17;
+        if(sample.Contains("ZJetsToNuNu_HT-600to800_"))correction=1.21;
+        if(sample.Contains("ZJetsToNuNu_HT-800to1200_"))correction=1.18;
+        if(sample.Contains("ZJetsToNuNu_HT-1200to2500_"))correction=1.12;
+        if(sample.Contains("ZJetsToNuNu_HT-2500toInf_"))correction=1.03;
+	
+        //std::cout<<"sample "<<sample<<std::endl;
+        if(sample.Contains("WJetsToLNu_HT-100to200_"))correction=1.03;
+        if(sample.Contains("WJetsToLNu_HT-200to400_"))correction=1.12;
+        if(sample.Contains("WJetsToLNu_HT-400to600_"))correction=1.19;
+        if(sample.Contains("WJetsToLNu_HT-600to800_"))correction=1.23;
+        if(sample.Contains("WJetsToLNu_HT-800to1200_"))correction=1.31;
+        if(sample.Contains("WJetsToLNu_HT-1200to2500_"))correction=1.2;
+        if(sample.Contains("WJetsToLNu_HT-2500toInf_"))correction=1.2;
+        
+        if(sample.Contains("tree_TTJets_SingleLeptFromT_"))correction=0.95;
+        if(sample.Contains("tree_TTJets_SingleLeptFromTbar_"))correction=0.95;
+        if(sample.Contains("tree_TTJets_DiLept_"))correction=0.95;        
+
+    return correction; 
 }

@@ -135,7 +135,7 @@ if __name__ == '__main__':
 	hrl.SetMinimum(0.0002);
 	hrl.Draw();
 
-	can.SetGrid(); 
+	#can.SetGrid(); 
 	can.SetLogy();
 	hrl.GetXaxis().SetRangeUser(1300,2500);
         hrl.SetMinimum(0.0001);
@@ -193,7 +193,7 @@ if __name__ == '__main__':
 	for i in range(0,100):
 		#print "Mass %d  Exp Excl %g " %(2000+i,g_exp.Eval(2000+i))
 		#print "Theory Xsec %g " %g_xsec.Eval(2000+i)
-		if(g_exp.Eval(2000+i)<g_xsec.Eval(2000+i)):print "Mass %d" %(2000+i)
+		if(g_obs.Eval(1900+i)<g_xsec.Eval(1900+i)):print "Mass %d" %(1900+i)
 	#oneLine.Draw("LSAMES");
 	txta.Draw();
 	txtb.Draw();
@@ -210,7 +210,7 @@ if __name__ == '__main__':
 	g_xsecSup.Draw("lsame")
 	g_xsecSdn.Draw("lsame")
 	can.SaveAs('T5ZZCombResults.pdf');
-	#can.SaveAs('T5ZZCombResults.C');
+	can.SaveAs('T5ZZCombResults.C');
 	fout=ROOT.TFile("BoostedZPlots.root","RECREATE")
         g_xsec.Write("GluinoTheoryXsec");
         g_xsecSup.Write("GluinoTheoryXsecSigmaUp");

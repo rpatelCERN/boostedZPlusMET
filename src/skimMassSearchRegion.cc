@@ -149,6 +149,9 @@ std::cout<<"reg "<<reg_<<std::endl;
     	int WMatchedJet1, WMatchedJet2;
 	int GenHadTau=0;
 	int nAK8=0;
+   	int          Run;
+   	int          Lumi;
+   	ULong64_t       Evt;
         newtree->Branch("WMatchedJet1", &WMatchedJet1, "WMatchedJet1/I");	
         newtree->Branch("WMatchedJet2", &WMatchedJet2, "WMatchedJet2/I");	
         newtree->Branch("JetPhi1", &JetPhi1, "JetPhi1/D");	
@@ -166,6 +169,9 @@ std::cout<<"reg "<<reg_<<std::endl;
         newtree->Branch("nAK8", &nAK8, "nAK8/I");
 	newtree->Branch("HT", &HT, "HT/D");
 	newtree->Branch("NJets", &NJets, "NJets/I");
+	newtree->Branch("Run", &Run, "Run/I");
+	newtree->Branch("Lumi", &Lumi, "Lumi/I");
+	newtree->Branch("Evt", &Evt, "Evt/L");
         //newtree->SetBranchAddress("BTags",&BTags,&b_BTags);
         newtree->Branch("MET",&MET, "MET/D");
         newtree->Branch("DeltaRtoClosestB", &DeltaRtoClosestB,"DeltaRtoClosestB/D");
@@ -180,6 +186,7 @@ std::cout<<"reg "<<reg_<<std::endl;
         double jetMass1,jetMass2;
         TString filename;
         cout << skims.sampleName[iSample]<<numEvents <<endl;
+	//continue;
     for( int iEvt = 0 ; iEvt < min(options.MAX_EVENTS,numEvents) ; iEvt++ ){
     //for( int iEvt = 0 ; iEvt < min(10,numEvents) ; iEvt++ ){
             ntuple->GetEntry(iEvt);
@@ -190,7 +197,7 @@ std::cout<<"reg "<<reg_<<std::endl;
              }
             if( ! passBaseline ) continue;
 	    //std::cout<<"Pass Baseline "<<std::endl; 	    
-            filename = ntuple->fChain->GetFile()->GetName();
+	  filename = ntuple->fChain->GetFile()->GetName(); 
             if( ( filename.Contains("SingleLept") || filename.Contains("DiLept") ) && ntuple->madHT>600. )continue;
             bin = -1;
             if(reg == skimSamples::kSignal ){
@@ -209,13 +216,27 @@ std::cout<<"reg "<<reg_<<std::endl;
 	    }
 	    double prefireweight=1.0;
 	    if( filename.Contains("2017") && !( skims.sampleName[iSample].Contains("data")))prefireweight=ntuple->NonPrefiringProb;
-	    if(filename.Contains("2016"))lumi=35922.;
-	    if(filename.Contains("2017"))lumi=41529.;
-	    if(filename.Contains("2018"))lumi=59740.;
+	    //if(filename.Contains("2016"))lumi=35922.;
+	    //if(filename.Contains("2017"))lumi=41529.;
+	    //if(filename.Contains("2018"))lumi=59740.;
+            if(filename.Contains("2016"))lumi=35922.;
+            if(filename.Contains("2017"))lumi=41529.;
+            if(filename.Contains("2018"))lumi=59740.;
+           // if(Era=="MC2018")lumi=20918.;//pre-HEM
+            //                       //if(Era=="MC2018")lumi=38627.;//post-HEM
 	   if(skims.sampleName[iSample]=="data" || skims.sampleName[iSample]=="data2017" || skims.sampleName[iSample]=="data2018")	trigWeight=1.0;
-	    weight = ntuple->Weight*lumi*prefireweight*trigWeight;//*customPUweights(ntuple)*trigWeight;
+	    double xseccorr=XSECCorrection(ntuple);
+	    weight = ntuple->Weight*lumi*prefireweight*trigWeight*xseccorr;//*customPUweights(ntuple)*trigWeight;
 	    //weight = ntuple->Weight *lumi*trigWeight*customPUweights(ntuple);    
 	    //std::cout<<"Weight "<<ntuple->Weight<<std::endl;
+	    Run=ntuple->RunNum;
+	    Evt=ntuple->EvtNum;
+            Lumi=ntuple->LumiBlockNum;
+	    if(skims.sampleName[iSample]=="data" && Run==279767 && Lumi==289 && Evt==502775984)std::cout<<"Filename" <<filename<<std::endl;
+	    if(skims.sampleName[iSample]=="data2017" && Run==297674 && Lumi==138 && Evt==222260106)std::cout<<"Filename" <<filename<<std::endl;
+	    if(skims.sampleName[iSample]=="data2017" && Run== 301323 && Lumi==179 && Evt==165008031)std::cout<<"Filename" <<filename<<std::endl;
+	    if(skims.sampleName[iSample]=="data2018" && Run== 319625 && Lumi==60 && Evt==78684588)std::cout<<"Filename" <<filename<<std::endl;
+	//std::cout<<"Evt Number "<<Evt<<std::endl;
             Weight=weight;
 	    MET=ntuple->MET;
 	    HT=ntuple->HT;
@@ -328,15 +349,17 @@ if(reg == skimSamples::kSignal ){
              passBaseline&=baselineCut(ntuple);
             }
             if( ! passBaseline ) continue;
+	//	std::cout<<"Here ZZ "<<std::endl;	
 	    if(getNumGenHiggses(ntuple)>0)continue;
-		//std::cout<<"Here ZZ "<<std::endl;	
                // std::vector<double> EfficiencyCenterUpDown = Eff_MetMhtSextetReal_CenterUpDown(ntuple->HT, ntuple->MHT, ntuple->NJets);
                // trigWeight=EfficiencyCenterUpDown[0];
 	    if(Era=="MC2016")lumi=35922.;
 	    if(Era=="MC2017")lumi=41529.;
-	    if(Era=="MC2018")lumi=59740.;
+	    //if(Era=="MC2018")lumi=59740.;
+            if(Era=="MC2018")lumi=20918.;//pre-HEM
+            //if(Era=="MC2018")lumi=38627.;//post-HEM
 	    double prefireweight=1.0;
-	    if( Era=="MC2017")prefireweight=ntuple->NonPrefiringProb;
+	    if( Era=="MC2017")prefireweight=ntuple->NonPrefiringProb;//ntuple->NonPrefiringProb;
 	     trigWeight=trigcorror.GetCorrection(ntuple->MHT,trigunc)*trigcorrorHT.GetCorrection(ntuple->HT,trigunc);
 	    double isrweight=SignalISRCorrection(ntuple,h_njetsisr);//SignalISRCorrection(ntuple);	    
             int nSigEvents=skims.NSignalEvents[iSample];   
