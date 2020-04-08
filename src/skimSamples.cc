@@ -170,7 +170,7 @@ public :
             TT->Add(skimTypeMC+"/"+TTFileNames[i]+Era+".root");
         }
         if( r == kSignal || r == kSLm || r == kSLe || r == kLowDphi ){
-           ntuples.push_back(new RA2bTree(TT));
+            ntuples.push_back(new RA2bTree(TT));
             sampleName.push_back("TT");
             fillColor.push_back(kCyan);
             lineColor.push_back(kCyan);
@@ -475,6 +475,7 @@ public :
 	TFile*fsig=TFile::Open("root://cmseos.fnal.gov//store/user/rgp230/SUSY/TChiHHV17/Skims/tree_signal/TwoZEvents/tree_signal/tree_T5qqqqZH_1000_1_"+Era+".root","READ");
         TH1F*temp=(TH1F*)fsig->Get("nEventProc");
 	fsig->Close();
+
 	T5HH1000->Add("root://cmseos.fnal.gov//store/user/rgp230/SUSY/TChiHHV17/Skims/tree_signal/TwoZEvents/tree_signal/tree_T5qqqqZH_1000_1_"+Era+".root");
 	T5HH1100->Add("root://cmseos.fnal.gov//store/user/rgp230/SUSY/TChiHHV17/Skims/tree_signal/TwoZEvents/tree_signal/tree_T5qqqqZH_1100_1_"+Era+".root");
 	T5HH1200->Add("root://cmseos.fnal.gov//store/user/rgp230/SUSY/TChiHHV17/Skims/tree_signal/TwoZEvents/tree_signal/tree_T5qqqqZH_1200_1_"+Era+".root");
@@ -492,6 +493,7 @@ public :
 	T5HH2400->Add("root://cmseos.fnal.gov//store/user/rgp230/SUSY/TChiHHV17/Skims/tree_signal/TwoZEvents/tree_signal/tree_T5qqqqZH_2400_1_"+Era+".root");
 	T5HH2500->Add("root://cmseos.fnal.gov//store/user/rgp230/SUSY/TChiHHV17/Skims/tree_signal/TwoZEvents/tree_signal/tree_T5qqqqZH_2500_1_"+Era+".root");
       if( r == kSignal ){
+
             signalNtuples.push_back(new RA2bTree(T5HH1000));
             signalNtuples.push_back(new RA2bTree(T5HH1100));
             signalNtuples.push_back(new RA2bTree(T5HH1200));

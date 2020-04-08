@@ -1,6 +1,8 @@
 #include "TLorentzVector.h"
 #include "TRandom3.h"
 #include "ISRCorrector.h"
+#include "btag/BTagCalibrationStandalone.h"
+#include "btag/BTagCalibrationStandalone.cc"
 // constants
 // ==============================================
 const double bbtagCut = 0.3;
@@ -11,6 +13,7 @@ const double baselineMassLow = 40.;
 const double baselineMassHigh = 140.;
 TFile* puWeightFile = new TFile("../data/PileupHistograms_0121_69p2mb_pm4p6.root");
 TH1F* puWeightHist = (TH1F*) puWeightFile->Get("pu_weights_down");
+
 // - - - - - - weights for WJets, GJets, - - - - - - - - 
 // - - - - - - and ZJets NLO Pt distribution - - - - - - 
 TFile* NLOWeightFile = new TFile("../data/kfactors.root");
@@ -25,6 +28,7 @@ TFile* isrfile = new TFile("../data/ISRWeights.root","READ");
 TH1* h_isr = (TH1*)isrfile->Get("isr_weights_central");
 //TH1* h_isr = (TH1*)isrfile->Get("isr_weights_down");
 ISRCorrector isrcorr;
+//BTagCorrector btagcorr;
 
 double CalcdPhi( double phi1 , double phi2 ){
 
@@ -1111,7 +1115,7 @@ template<typename ntupleType> bool baselineCut(ntupleType* ntuple){
            ntuple->JetsAK8_softDropMass->at(1) >baselineMassLow && 
            ntuple->JetsAK8_softDropMass->at(1) < baselineMassHigh
 	   &&
-	   dRtoClosestB(ntuple)>0.8 && 	
+	   dRtoClosestB(ntuple,1)>0.8 && 	
 	   //dRtoClosestB(ntuple)>2.0
            DeltaPhiCuts(ntuple) && 
            ntuple->Muons->size()+ntuple->Electrons->size()==0 
@@ -1119,15 +1123,58 @@ template<typename ntupleType> bool baselineCut(ntupleType* ntuple){
            FiltersCut(ntuple) &&
            ntuple->JetID == 1);
 }
+template<typename ntupleType>double BScaleFactors(ntupleType*ntuple){
+double SF=1.0;
+int j=JetDRtoClosestB(ntuple,1);
+if(j<0)return SF;
+TString sample = ntuple->fChain->GetFile()->GetName();
+BTagCalibrationS calib;
+double BTagDiscrimCut=0.6321;
+if(sample.Contains("2016"))calib = BTagCalibrationS("","btag/DeepCSV_94XSF_V3_B_F_mod.csv");
+//btagcorr.SetCalib("btag/DeepCSV_94XSF_V3_B_F_mod.csv");
+if(sample.Contains("2017")){calib = BTagCalibrationS("","btag/DeepCSV_Moriond17_B_H.csv");}
+if(sample.Contains("2018")){calib = BTagCalibrationS("","btag/DeepCSV_102XSF_V1_mod.csv");}
+	//:qprob = btagcorr.GetCorrections(looper->Jets,looper->Jets_hadronFlavor,looper->Jets_HTMask);
+BTagCalibrationReaderS reader = BTagCalibrationReaderS(BTagEntryS::OP_MEDIUM, "central", {"up","down"});
+reader.load(calib, BTagEntryS::FLAV_B, "comb"); reader.load(calib, BTagEntryS::FLAV_C, "comb");  reader.load(calib, BTagEntryS::FLAV_UDSG, "incl");
+if(ntuple->Jets_hadronFlavor->at(j)==5){
+SF=reader.eval_auto_bounds(
+          "central", 
+          BTagEntryS::FLAV_B, 
+          ntuple->Jets->at(j).Eta(), // absolute value of eta
+          ntuple->Jets->at(j).Pt()//,BTagDiscrimCut
+      );
+}
+if(ntuple->Jets_hadronFlavor->at(j)==4){
+SF=reader.eval_auto_bounds(
+          "central", 
+          BTagEntryS::FLAV_C, 
+          ntuple->Jets->at(j).Eta(), // absolute value of eta
+          ntuple->Jets->at(j).Pt()//,BTagDiscrimCut
+      );
+}
+if(ntuple->Jets_hadronFlavor->at(j)<4 ||ntuple->Jets_hadronFlavor->at(j)==21 ){
+SF=reader.eval_auto_bounds(
+          "central", 
+          BTagEntryS::FLAV_UDSG, 
+          ntuple->Jets->at(j).Eta(), // absolute value of eta
+          ntuple->Jets->at(j).Pt()//,BTagDiscrimCut
+      );
+}
+//Need to make this a weight for the Veto
+//SF=2-SF;
+return SF;
+}
 
-template<typename ntupleType> float dRtoClosestB(ntupleType* ntuple){
+template<typename ntupleType> float JetDRtoClosestB(ntupleType* ntuple,int i){
 //float leadjeteta= ntuple->JetsAK8->at(0).Eta();
 //float leadjetphi= ntuple->JetsAK8->at(0).Phi();
 float dRMin=999999.;
 TString sample = ntuple->fChain->GetFile()->GetName();
 double BTagDiscrimCut=0.4941;
-if(sample.Contains("data2018"))BTagDiscrimCut=0.4184;
-if(sample.Contains("data") && !sample.Contains("2017") && !sample.Contains("2018"))BTagDiscrimCut=0.6321;
+if(sample.Contains("2018"))BTagDiscrimCut=0.4184;
+if(sample.Contains("2016") && !sample.Contains("2017") && !sample.Contains("2018"))BTagDiscrimCut=0.6321;
+int Closestjet=-1;
 	for(unsigned int j=0; j<ntuple->Jets->size(); ++j){
 		//if(ntuple->Jets_bDiscriminatorCSV->at(j)<  0.8484  )continue;
 		if(ntuple->Jets_bJetTagDeepCSVBvsAll->at(j)<  BTagDiscrimCut  )continue;
@@ -1136,8 +1183,37 @@ if(sample.Contains("data") && !sample.Contains("2017") && !sample.Contains("2018
 		//float dR=sqrt((deta*deta)+(dphi*dphi));
 		//if(dR<dRMin)dRMin=dR;		
 		if(ntuple->JetsAK8->size()==1)continue;
-		float subleadjeteta= ntuple->JetsAK8->at(1).Eta();
-		float subleadjetphi= ntuple->JetsAK8->at(1).Phi();
+		float subleadjeteta= ntuple->JetsAK8->at(i).Eta();
+		float subleadjetphi= ntuple->JetsAK8->at(i).Phi();
+	 	float deta=ntuple->Jets->at(j).Eta()-subleadjeteta;
+                float dphi=ntuple->Jets->at(j).Phi()-subleadjetphi;
+                float dR=sqrt((deta*deta)+(dphi*dphi));
+		
+		if(dR<dRMin){dRMin=dR;	Closestjet=j;}
+	}
+if(dRMin>0.8)Closestjet=-1;
+//std::cout<<"dR to Closest B "<<dRMin<<std::endl;
+return Closestjet;
+}
+
+template<typename ntupleType> float dRtoClosestB(ntupleType* ntuple,int i){
+//float leadjeteta= ntuple->JetsAK8->at(0).Eta();
+//float leadjetphi= ntuple->JetsAK8->at(0).Phi();
+float dRMin=999999.;
+TString sample = ntuple->fChain->GetFile()->GetName();
+double BTagDiscrimCut=0.4941;
+if(sample.Contains("2018"))BTagDiscrimCut=0.4184;
+if(sample.Contains("2016") && !sample.Contains("2017") && !sample.Contains("2018"))BTagDiscrimCut=0.6321;
+	for(unsigned int j=0; j<ntuple->Jets->size(); ++j){
+		//if(ntuple->Jets_bDiscriminatorCSV->at(j)<  0.8484  )continue;
+		if(ntuple->Jets_bJetTagDeepCSVBvsAll->at(j)<  BTagDiscrimCut  )continue;
+		//float deta=ntuple->Jets->at(j).Eta()-leadjeteta;
+		//float dphi=ntuple->Jets->at(j).Phi()-leadjetphi;
+		//float dR=sqrt((deta*deta)+(dphi*dphi));
+		//if(dR<dRMin)dRMin=dR;		
+		if(ntuple->JetsAK8->size()==1)continue;
+		float subleadjeteta= ntuple->JetsAK8->at(i).Eta();
+		float subleadjetphi= ntuple->JetsAK8->at(i).Phi();
 	 	float deta=ntuple->Jets->at(j).Eta()-subleadjeteta;
                 float dphi=ntuple->Jets->at(j).Phi()-subleadjetphi;
                 float dR=sqrt((deta*deta)+(dphi*dphi));
@@ -1164,7 +1240,7 @@ template<typename ntupleType> bool singleMuBaselineCut(ntupleType* ntuple){
            ntuple->JetsAK8->at(1).Pt() > 200. &&
            ntuple->JetsAK8_softDropMass->at(1) >baselineMassLow && 
            ntuple->JetsAK8_softDropMass->at(1) < baselineMassHigh
-	   //&& dRtoClosestB(ntuple)>0.8
+	   && dRtoClosestB(ntuple,1)>0.8
 	   &&
            DeltaPhiCuts(ntuple) && 
            FiltersCut(ntuple) &&
@@ -1186,7 +1262,7 @@ template<typename ntupleType> bool doubleMuBaselineCut(ntupleType* ntuple){
            ntuple->JetsAK8->at(1).Pt() > 200. &&
            ntuple->JetsAK8_softDropMass->at(1) >baselineMassLow && 
            ntuple->JetsAK8_softDropMass->at(1) < baselineMassHigh
-	   && dRtoClosestB(ntuple)>0.8
+	   && dRtoClosestB(ntuple,1)>0.8
 	   &&
            DeltaPhiCuts(ntuple) && 
            FiltersCut(ntuple) &&
@@ -1221,7 +1297,7 @@ template<typename ntupleType> bool doubleEleBaselineCut(ntupleType* ntuple){
            ntuple->JetsAK8->at(1).Pt() > 200. &&
            ntuple->JetsAK8_softDropMass->at(1) >baselineMassLow && 
            ntuple->JetsAK8_softDropMass->at(1) < baselineMassHigh
-	   && dRtoClosestB(ntuple)>0.8	
+	   && dRtoClosestB(ntuple,1)>0.8	
 	   &&
            DeltaPhiCuts(ntuple) && 
            FiltersCut(ntuple) &&
@@ -1231,11 +1307,9 @@ template<typename ntupleType> bool doubleEleBaselineCut(ntupleType* ntuple){
 template<typename ntupleType> bool singleEleBaselineCut(ntupleType* ntuple){
     bool HEMVeto=true;
     TString sample = ntuple->fChain->GetFile()->GetName();
-/*
     if(sample.Contains("data2018")){
     HEMVeto=ntuple->HEMDPhiVetoFilter;
  }
-*/
   return ( ntuple->MET > 100.             &&
            ntuple->HT > 400.                         &&
            ntuple->JetsAK8->size() >1 &&
@@ -1246,7 +1320,7 @@ template<typename ntupleType> bool singleEleBaselineCut(ntupleType* ntuple){
            ntuple->JetsAK8->at(1).Pt() > 200. &&
            ntuple->JetsAK8_softDropMass->at(1) >baselineMassLow && 
            ntuple->JetsAK8_softDropMass->at(1) < baselineMassHigh
-	//   && dRtoClosestB(ntuple)>0.8	
+	   && dRtoClosestB(ntuple,1)>0.8	
 	   &&
            DeltaPhiCuts(ntuple) && 
            FiltersCut(ntuple) &&

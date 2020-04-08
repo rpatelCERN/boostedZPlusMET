@@ -144,11 +144,13 @@ std::cout<<"reg "<<reg_<<std::endl;
         double MET,HT,Weight,JetPt1, JetPt2, JetPhi1, JetPhi2,PrunedMass1, PrunedMass2, Jet1_tau2overtau1, Jet2_tau2overtau1;
 	double JetEta1,JetEta2;
 	double DeltaRtoClosestB;
+	double DeltaRtoClosestBLead;
         int NJets;
         //TBranch*b_BTags, *b_Weight,*b_MET,*b_HT,*b_JetPt1, *b_JetPt2,*b_PrunedMass1, *b_PrunedMass2, *b_Jet1_tau2overtau1, *b_Jet2_tau2overtau1, *b_GenHadTau;
     	int WMatchedJet1, WMatchedJet2;
 	int GenHadTau=0;
 	int nAK8=0;
+	int NVtx=0;
    	int          Run;
    	int          Lumi;
    	ULong64_t       Evt;
@@ -175,7 +177,8 @@ std::cout<<"reg "<<reg_<<std::endl;
         //newtree->SetBranchAddress("BTags",&BTags,&b_BTags);
         newtree->Branch("MET",&MET, "MET/D");
         newtree->Branch("DeltaRtoClosestB", &DeltaRtoClosestB,"DeltaRtoClosestB/D");
-        
+        newtree->Branch("DeltaRtoClosestBLead", &DeltaRtoClosestBLead,"DeltaRtoClosestBLead/D");
+        newtree->Branch("NVtx", &NVtx, "NVtx/I");    
         int numEvents = ntuple->fChain->GetEntries();
         ntupleBranchStatus<RA2bTree>(ntuple);
         int bin = -1;
@@ -226,7 +229,9 @@ std::cout<<"reg "<<reg_<<std::endl;
             //                       //if(Era=="MC2018")lumi=38627.;//post-HEM
 	   if(skims.sampleName[iSample]=="data" || skims.sampleName[iSample]=="data2017" || skims.sampleName[iSample]=="data2018")	trigWeight=1.0;
 	    double xseccorr=XSECCorrection(ntuple);
-	    weight = ntuple->Weight*lumi*prefireweight*trigWeight*xseccorr;//*customPUweights(ntuple)*trigWeight;
+	    double Bweight=BScaleFactors(ntuple);
+
+	    weight = ntuple->Weight*lumi*prefireweight*trigWeight*xseccorr*Bweight;//*customPUweights(ntuple)*trigWeight;
 	    //weight = ntuple->Weight *lumi*trigWeight*customPUweights(ntuple);    
 	    //std::cout<<"Weight "<<ntuple->Weight<<std::endl;
 	    Run=ntuple->RunNum;
@@ -243,7 +248,8 @@ std::cout<<"reg "<<reg_<<std::endl;
 	    BTags=ntuple->BTags;
 	    NJets=ntuple->NJets;
 	    nAK8=ntuple->JetsAK8->size();
-	    DeltaRtoClosestB=dRtoClosestB(ntuple);
+	    DeltaRtoClosestB=dRtoClosestB(ntuple,1);
+	    DeltaRtoClosestBLead=dRtoClosestB(ntuple,0);
 	    if(nAK8>0){
             JetPhi1=ntuple->JetsAK8->at(0).Phi();  
             JetPt1=ntuple->JetsAK8->at(0).Pt();  
@@ -264,16 +270,16 @@ std::cout<<"reg "<<reg_<<std::endl;
 	WMatchedJet2=0;
 	if(skims.sampleName[iSample]!="data" && skims.sampleName[iSample]!="data2017" && skims.sampleName[iSample]!="data2018"){
 	for( int i=0 ; i < ntuple->GenParticles->size() ; i++ ){
-                        if(abs(ntuple->GenParticles_PdgId->at(i))>0 && abs(ntuple->GenParticles_PdgId->at(i))<5 && abs(ntuple->GenParticles_ParentId->at(i))==24){ 
+                        if(abs(ntuple->GenParticles_PdgId->at(i))>0 && abs(ntuple->GenParticles_PdgId->at(i))<5 && abs(ntuple->GenParticles_ParentId->at(i))==23){ 
       	//if( abs(ntuple->GenParticles_PdgId->at(i)) == 24 && ntuple->GenParticles->at(i).Pt()>200){ //&& ntuple->JetsAK8->at(0).DeltaR(ntuple->GenParticles->at(i))<0.4){
 			if(nAK8<1)continue;
 			float deta=ntuple->JetsAK8->at(0).Eta()-ntuple->GenParticles->at(i).Eta();
 			float dphi=ntuple->JetsAK8->at(0).Phi()-ntuple->GenParticles->at(i).Phi();
-			if(sqrt((deta*deta)+(dphi*dphi))<0.4)WMatchedJet1=1;
+			if(sqrt((deta*deta)+(dphi*dphi))<0.8)WMatchedJet1=1;
 	    		if(nAK8<2)continue;
 			deta=ntuple->JetsAK8->at(1).Eta()-ntuple->GenParticles->at(i).Eta();
 			dphi=ntuple->JetsAK8->at(1).Phi()-ntuple->GenParticles->at(i).Phi();
-			if(sqrt((deta*deta)+(dphi*dphi))<0.4)WMatchedJet2=1;
+			if(sqrt((deta*deta)+(dphi*dphi))<0.8)WMatchedJet2=1;
 		}
     	     }
 	}
@@ -299,11 +305,12 @@ if(reg == skimSamples::kSignal ){
         double MET,HT,Weight,JetPt1, JetPt2,JetPhi1, JetPhi2,JetEta1, JetEta2,PrunedMass1, PrunedMass2, Jet1_tau2overtau1, Jet2_tau2overtau1;
         //TBranch*b_BTags, *b_Weight,*b_MET,*b_JetPt1, *b_JetPt2,*b_PrunedMass1, *b_PrunedMass2, *b_Jet1_tau2overtau1, *b_Jet2_tau2overtau1, *b_GenHadTau;
     	int WMatchedJet1, WMatchedJet2;
-	int NJets;
+	int NJets,ZHad;
 	int GenHadTau=0;
-	int nAK8=0;
+	int nAK8=0;int NVtx=0;
 	double DeltaRtoClosestB;
-        double ZpT;
+        double ZpT1=0;
+	double ZpT2=0;
         newtree->Branch("WMatchedJet1", &WMatchedJet1, "WMatchedJet1/I");	
        newtree->Branch("WMatchedJet2", &WMatchedJet2, "WMatchedJet2/I");	
         newtree->Branch("JetEta1", &JetEta1, "JetEta1/D");	
@@ -323,8 +330,11 @@ if(reg == skimSamples::kSignal ){
         newtree->Branch("DeltaRtoClosestB", &DeltaRtoClosestB,"DeltaRtoClosestB/D");
         //newtree->SetBranchAddress("BTags",&BTags,&b_BTags);
         newtree->Branch("MET",&MET, "MET/D");
-	newtree->Branch("ZpT", &ZpT, "ZpT/D");
+	newtree->Branch("ZHad", &ZHad, "ZHad/I");
+	newtree->Branch("ZpT1", &ZpT1, "ZpT1/D");
+	newtree->Branch("ZpT2", &ZpT2, "ZpT2/D");
 	newtree->Branch("NJets", &NJets, "NJets/I");
+        newtree->Branch("NVtx", &NVtx, "NVtx/I");    
          
         //newtree->SetBranchAddress("BTags",&BTags,&b_BTags);
         //newtree->SetBranchAddress("MET",&MET, &b_MET);
@@ -355,22 +365,25 @@ if(reg == skimSamples::kSignal ){
                // trigWeight=EfficiencyCenterUpDown[0];
 	    if(Era=="MC2016")lumi=35922.;
 	    if(Era=="MC2017")lumi=41529.;
-	    //if(Era=="MC2018")lumi=59740.;
-            if(Era=="MC2018")lumi=20918.;//pre-HEM
+	    if(Era=="MC2018")lumi=59740.;
+            //if(Era=="MC2018")lumi=20918.;//pre-HEM
             //if(Era=="MC2018")lumi=38627.;//post-HEM
 	    double prefireweight=1.0;
 	    if( Era=="MC2017")prefireweight=ntuple->NonPrefiringProb;//ntuple->NonPrefiringProb;
 	     trigWeight=trigcorror.GetCorrection(ntuple->MHT,trigunc)*trigcorrorHT.GetCorrection(ntuple->HT,trigunc);
 	    double isrweight=SignalISRCorrection(ntuple,h_njetsisr);//SignalISRCorrection(ntuple);	    
             int nSigEvents=skims.NSignalEvents[iSample];   
-	    //std::cout<<"NEvents "<<nSigEvents<<std::endl;
-	    weight=isrweight*ntuple->Weight*lumi*prefireweight*trigWeight/(0.25*nSigEvents);
+	    double Bweight=BScaleFactors(ntuple);
+	    //std::cout<<"Bweight "<<Bweight<<std::endl;
+	    weight=isrweight*ntuple->Weight*lumi*prefireweight*trigWeight*Bweight/(0.25*nSigEvents);
 	    //weight=isrweight*ntuple->Weight*lumi*prefireweight*trigWeight/(0.25);
+	    NVtx=ntuple->NVtx;
             Weight=weight;
 	    HT=ntuple->HT;
 	    MET=ntuple->MET;
 	    BTags=ntuple->BTags;
-	    DeltaRtoClosestB=dRtoClosestB(ntuple);
+	    DeltaRtoClosestB=dRtoClosestB(ntuple,1);
+
 	    nAK8=ntuple->JetsAK8->size();
 	    NJets=ntuple->NJets;
 	    if(nAK8>0){
@@ -378,7 +391,8 @@ if(reg == skimSamples::kSignal ){
             JetPhi1=ntuple->JetsAK8->at(0).Phi();  
             JetPt1=ntuple->JetsAK8->at(0).Pt();  
 	    double smear=ResolutionSmear(ntuple,0,iEvt, false);
-	    PrunedMass1=smear;//ntuple->JetsAK8_softDropMass->at(0);
+	    PrunedMass1=smear;//
+	    //PrunedMass1=ntuple->JetsAK8_softDropMass->at(0);
 	   Jet1_tau2overtau1=ntuple->JetsAK8_NsubjettinessTau2->at(0)/ntuple->JetsAK8_NsubjettinessTau1->at(0);
 	   }
 	    if(nAK8>1){
@@ -386,20 +400,37 @@ if(reg == skimSamples::kSignal ){
             JetPhi2=ntuple->JetsAK8->at(1).Phi();
             JetPt2=ntuple->JetsAK8->at(1).Pt();
 	    double smear=ResolutionSmear(ntuple,1,iEvt, false);
-	    PrunedMass2=smear;//ntuple->JetsAK8_softDropMass->at(1);
+	    PrunedMass2=smear;
+	    //PrunedMass2=ntuple->JetsAK8_softDropMass->at(1);
 	    Jet2_tau2overtau1=ntuple->JetsAK8_NsubjettinessTau2->at(1)/ntuple->JetsAK8_NsubjettinessTau1->at(1);
 	    }
+	WMatchedJet1=0;
+	WMatchedJet2=0;
+	ZHad=0;
+	ZpT1=0;
+	ZpT2=0;
 	std::vector<unsigned int >ZBosonIndex;
+	int ZCount=0;
     	for( int i=0 ; i < ntuple->GenParticles->size() ; i++ ){
-        	if( ntuple->GenParticles_PdgId->at(i) == 23 &&
-        	    ntuple->GenParticles_ParentId->at(i) == 1000023 &&
-        	    ntuple->GenParticles_Status->at(i) == 22 )ZBosonIndex.push_back(i);
-		
-        	//    numZs++;
-    		} 
-	ZpT=ntuple->GenParticles->at(ZBosonIndex.at(0)).Pt();
-        if(ZpT>ntuple->GenParticles->at(ZBosonIndex.at(1)).Pt())ZpT=ntuple->GenParticles->at(ZBosonIndex.at(1)).Pt();
-        //std::cout<<"Z boson int "<<ntuple->GenParticles->at(ZBosonIndex.at(0)).Pt()<< " Mother " <<ntuple->GenParticles->at(ntuple->GenParticles_ParentIdx->at(ZBosonIndex.at(0))).Pt()<<std::endl;      
+			if(abs(ntuple->GenParticles_PdgId->at(i))==23)++ZCount;
+                        if(abs(ntuple->GenParticles_PdgId->at(i))>0 && abs(ntuple->GenParticles_PdgId->at(i))<=5 && abs(ntuple->GenParticles_ParentId->at(i))==23){ 
+			ZBosonIndex.push_back(i);
+			if(nAK8<1)continue;
+			float deta=ntuple->JetsAK8->at(0).Eta()-ntuple->GenParticles->at(i).Eta();
+			float dphi=ntuple->JetsAK8->at(0).Phi()-ntuple->GenParticles->at(i).Phi();
+			if(ZCount==1)ZpT1=ntuple->GenParticles->at(ntuple->GenParticles_ParentIdx->at(i)).Pt();
+			if(ZCount==2)ZpT2=ntuple->GenParticles->at(ntuple->GenParticles_ParentIdx->at(i)).Pt();
+			if(sqrt((deta*deta)+(dphi*dphi))<0.8)WMatchedJet1=1;
+	    		if(nAK8<2)continue;
+			deta=ntuple->JetsAK8->at(1).Eta()-ntuple->GenParticles->at(i).Eta();
+			dphi=ntuple->JetsAK8->at(1).Phi()-ntuple->GenParticles->at(i).Phi();
+			if(sqrt((deta*deta)+(dphi*dphi))<0.8)WMatchedJet2=1;
+			
+			}	
+    		
+	}
+	//std::cout<<"ZpT "<<ZpT1<<", "<<ZpT2<<std::endl; 
+	ZHad=ZBosonIndex.size();
         newtree->Fill();
 	}
         outputFile->cd();
