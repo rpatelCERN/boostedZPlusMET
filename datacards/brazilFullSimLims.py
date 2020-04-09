@@ -120,7 +120,7 @@ if __name__ == '__main__':
 	can = ROOT.TCanvas("can","can",1200,1000);
 	hrl = ROOT.TH1F("hrl","hrl",30,1000,2500);
 	# hrl = can.DrawFrame(0,0,6,15);
-	hrl.GetYaxis().SetTitle("95% CL Upper limit on #sigma_{signal} [pb] ");
+	hrl.GetYaxis().SetTitle("Cross section [pb] ");
 	hrl.GetXaxis().SetTitle("M_{#tilde{g}} [GeV]");
 	#for i in range(0,15):
 	#	if i%3==0:
@@ -139,14 +139,17 @@ if __name__ == '__main__':
 	can.SetLogy();
 	hrl.GetXaxis().SetRangeUser(1300,2500);
         hrl.SetMinimum(0.0001);
-	txta = ROOT.TLatex(0.65,0.905,"CMS");
+	txta = ROOT.TLatex(0.17,0.96,"CMS");
 	txta.SetNDC();
 	txtb = ROOT.TLatex(0.75,0.905,"Preliminary");
 	txtb.SetNDC(); txtb.SetTextFont(52);
 	
 	txtc = ROOT.TLatex(0.75,0.96,"137 fb^{-1} (13 TeV)");
 	txtc.SetNDC(); txtc.SetTextFont(42); txtc.SetTextSize(0.04);
-	txtd = ROOT.TLatex(0.65,0.85,"#tilde{#chi}^{2}_{0}#rightarrow Z #tilde{#chi}^{1}_{0}, #tilde{#chi}^{2}_{0}#rightarrow Z #tilde{#chi}^{1}_{0}");
+        txtd = ROOT.TLatex(0.45,0.86,"pp#rightarrow #tilde{g} #tilde{g}, #tilde{g} #rightarrow q #bar{q} #tilde{#chi}^{0}_{2}, #tilde{#chi}^{0}_{2} #rightarrow Z #tilde{#chi}^{0}_{1} ");
+	txte = ROOT.TLatex(0.45,0.8,"m_{#tilde{g}} #font[122]{-} m_{#tilde{#chi}^{0}_{2}} = 50 GeV, m_{#tilde{#chi}^{0}_{1}} = 1 GeV  ");
+        txte.SetNDC(); txte.SetTextFont(42); txte.SetTextSize(0.05);	
+	#txtd = ROOT.TLatex(0.65,0.85,"#tilde{#chi}^{2}_{0}#rightarrow Z #tilde{#chi}^{1}_{0}, #tilde{#chi}^{2}_{0}#rightarrow Z #tilde{#chi}^{1}_{0}");
 	txtd.SetNDC(); txtd.SetTextFont(42); txtd.SetTextSize(0.05);
 	f=open("LatestGluGluNNLO.txt", 'r')
 	a_stop = array('d', []);
@@ -163,25 +166,27 @@ if __name__ == '__main__':
         g_xsecSup=ROOT.TGraph(len(a_stop), a_stop, a_xsecUP)
         g_xsecSdn=ROOT.TGraph(len(a_stop), a_stop, a_xsecDown)
 	#leg = ROOT.TLegend(0.20,0.15,0.35,0.30);
-	leg = ROOT.TLegend(0.6510851,0.6020806,0.9499165,0.8062419);
+	leg = ROOT.TLegend(0.6477462,0.5292308,0.9474124,0.7333333);
 	leg.SetFillStyle(1001);
 	leg.SetFillColor(0);    
 	leg.SetBorderSize(1);  
 	# leg.SetNColumns(2);
 	leg.AddEntry(g_exp,"expected","l")
 	leg.AddEntry(g_obs,"observed","l")
-	leg.AddEntry(g_2sig,"expected 2#sigma","f")
-	leg.AddEntry(g_1sig,"expected 1#sigma","f")
-  	leg.AddEntry(g_xsec, "Theory cross-section", "l") 
+	leg.AddEntry(g_2sig,"expected 2#sigma_{exp}","f")
+	leg.AddEntry(g_1sig,"expected 1#sigma_{exp}","f")
+  	leg.AddEntry(g_xsec, "Theory #pm #sigma_{theory}", "l")
+
+   
 	#oneLine = ROOT.TF1("oneLine","1",175,550);
 	#oneLine.SetLineColor(ROOT.kRed+2);
 	#oneLine.SetLineWidth(2);
 	#oneLine.SetLineStyle(1);
 	
 	g_1sig.SetFillColor(ROOT.kGreen);
-	g_1sig.SetFillStyle(3244);
+	g_1sig.SetFillStyle(1000);
 	g_2sig.SetFillColor(ROOT.kYellow);
-	g_2sig.SetFillStyle(3244);
+	g_2sig.SetFillStyle(1000);
 	g_exp.SetLineStyle(2);
 	g_exp.SetLineWidth(2);
 	g_obs.SetLineWidth(2);
@@ -193,12 +198,14 @@ if __name__ == '__main__':
 	for i in range(0,100):
 		#print "Mass %d  Exp Excl %g " %(2000+i,g_exp.Eval(2000+i))
 		#print "Theory Xsec %g " %g_xsec.Eval(2000+i)
-		if(g_obs.Eval(1900+i)<g_xsec.Eval(1900+i)):print "Mass %d" %(1900+i)
+		#if(g_obs.Eval(1900+i)<g_xsec.Eval(1900+i)):print "Mass %d" %(1900+i)
+		if(g_exp.Eval(2000+i)<g_xsec.Eval(2000+i)):print "Mass %d" %(2000+i)
 	#oneLine.Draw("LSAMES");
 	txta.Draw();
-	txtb.Draw();
+	#txtb.Draw();
 	txtc.Draw();
 	txtd.Draw();	
+	txte.Draw();	
 	leg.Draw();
 	g_xsecSdn.SetLineStyle(2);
 	g_xsecSup.SetLineStyle(2);
@@ -209,6 +216,9 @@ if __name__ == '__main__':
 	g_xsec.Draw("lsame")
 	g_xsecSup.Draw("lsame")
 	g_xsecSdn.Draw("lsame")
+	ROOT.gPad.Update();
+   	ROOT.gPad.RedrawAxis();
+	#hrl.Draw("same")
 	can.SaveAs('T5ZZCombResults.pdf');
 	can.SaveAs('T5ZZCombResults.C');
 	fout=ROOT.TFile("BoostedZPlots.root","RECREATE")

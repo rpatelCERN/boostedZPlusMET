@@ -1,0 +1,37 @@
+# Simple counting experiment, with one signal and a few background processes 
+# BoostedZ Card with MET shape, stat/sys and mass shape stat/sys uncertainties
+imax 6  number of channels
+jmax 1  number of backgrounds
+kmax *  number of nuisance parameters (sources of systematical uncertainties)
+------------
+# we have 6 met channels
+bin bin1 bin2 bin3 bin4 bin5 bin6 
+observation 237 67 20 3 3 1
+#observation 229.3 59.7 20.4 3.08 0.38 0.193
+------------
+bin             bin1 bin1 bin2 bin2 bin3 bin3 bin4 bin4 bin5 bin5 bin6 bin6
+process         sig  bkg  sig  bkg  sig  bkg  sig  bkg  sig  bkg sig bkg
+process          0     1    0   1     0   1    0    1    0    1	0 1
+rate           sig1 235.7 sig2 63.3  sig3 22.2 sig4 3.17 sig5 0.39 sig6 0.198
+------------
+lumi lnN 1.0243 - 1.0243 - 1.0243 - 1.0243 - 1.0243 - 1.0243 - 
+IsoTrack lnN 1.02 - 1.02 - 1.02 - 1.02 - 1.02 - 1.02 - 
+TrigSyst lnN 1.02 - 1.02 -  1.02 - 1.02 -  1.02 - 1.02 - 
+ISRSys lnN 
+SignalStat lnN
+SignalJEC lnN
+SignalJER lnN 
+SignalRes lnN 
+SignalPrefire lnN 
+SignalScale lnN
+MassShapeUncStat lnN - 1.0101 - 1.0101 - 1.0101 - 1.0101 - 1.0101 - 1.0101
+MassShapeUncSys lnN - 1.034 - 1.034 - 1.034 - 1.034 - 1.034 - 1.034
+METUncStat1 gmN 1191 - 0.198 - - - - - - - - - -
+METUncStat2 gmN 320 - - - 0.198 - - - - - - - -
+METUncStat3 gmN 112 - - - - - 0.198 - - - - - -
+METUncStat4 gmN 16 - - - - - - - 0.198 - - - -
+METUncStat5 gmN 2 - - - - - - - - - 0.195 - -
+PoisMETUncStat6 gmN 1 - - - - - - - - - - - 0.198
+METShapeClosure lnN - 1.03 - 1.01 - 1.01 - 1.04 - 0.81 - 0.83
+METShapeValidationTTWJets lnN - 1.006 - 0.996 - 0.996 - 0.991 - 0.984  - 0.981
+METShapeValidationZJets lnN - 1.04 -  1.0 -  0.932 - 0.85 - 0.760 - 0.714

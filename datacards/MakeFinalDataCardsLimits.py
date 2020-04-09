@@ -1,7 +1,7 @@
 import os
 from array import array
 from ROOT import *
-f=open("realistic-counting-experimentoptimization.txt", "r")
+f=open("realistic-counting-experimentoptimizationgmN.txt", "r")
 #Signal yields in MET bins for each of the mass points
 #Bkg Yields in the same MET bins for the mass points
 #finputs=TFile("BkgEstimates.root", "READ");

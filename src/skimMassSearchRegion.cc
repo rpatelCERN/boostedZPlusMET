@@ -365,8 +365,8 @@ if(reg == skimSamples::kSignal ){
                // trigWeight=EfficiencyCenterUpDown[0];
 	    if(Era=="MC2016")lumi=35922.;
 	    if(Era=="MC2017")lumi=41529.;
-	    if(Era=="MC2018")lumi=59740.;
-            //if(Era=="MC2018")lumi=20918.;//pre-HEM
+	    //if(Era=="MC2018")lumi=59740.;
+            if(Era=="MC2018")lumi=20918.;//pre-HEM
             //if(Era=="MC2018")lumi=38627.;//post-HEM
 	    double prefireweight=1.0;
 	    if( Era=="MC2017")prefireweight=ntuple->NonPrefiringProb;//ntuple->NonPrefiringProb;
