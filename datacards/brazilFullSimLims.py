@@ -177,7 +177,37 @@ if __name__ == '__main__':
 	leg.AddEntry(g_1sig,"expected 1#sigma_{exp}","f")
   	leg.AddEntry(g_xsec, "Theory #pm #sigma_{theory}", "l")
 
-   
+        leg2 = ROOT.TLegend(0.6477462,0.4564103,0.9482471,0.6605128); 
+        leg2.SetBorderSize(0);
+        leg2.SetLineColor(1);
+        leg2.SetLineStyle(1);
+        leg2.SetLineWidth(1);
+        leg2.SetFillColor(0);
+        leg2.SetFillStyle(0);
+        entry=leg2.AddEntry("NULL"," ","l");
+        entry.SetLineColor(4);
+        entry.SetLineStyle(2);
+        entry.SetLineWidth(1);
+        entry.SetMarkerColor(1);
+   	entry.SetMarkerStyle(21);
+   	entry.SetMarkerSize(1);
+   	entry.SetTextFont(42);
+        leg3 = ROOT.TLegend(0.648581,0.4489744,0.9490818,0.6330769);
+        leg3.SetBorderSize(0);
+        leg3.SetLineColor(1);
+        leg3.SetLineStyle(1);
+        leg3.SetLineWidth(1);
+        leg3.SetFillColor(0);
+        leg3.SetFillStyle(0);
+        entry=leg3.AddEntry("NULL"," ","l");
+        entry.SetLineColor(4);
+        entry.SetLineStyle(2);
+        entry.SetLineWidth(1);
+        entry.SetMarkerColor(1);
+   	entry.SetMarkerStyle(21);
+   	entry.SetMarkerSize(1);
+   	entry.SetTextFont(42);
+
 	#oneLine = ROOT.TF1("oneLine","1",175,550);
 	#oneLine.SetLineColor(ROOT.kRed+2);
 	#oneLine.SetLineWidth(2);
@@ -198,8 +228,8 @@ if __name__ == '__main__':
 	for i in range(0,100):
 		#print "Mass %d  Exp Excl %g " %(2000+i,g_exp.Eval(2000+i))
 		#print "Theory Xsec %g " %g_xsec.Eval(2000+i)
-		#if(g_obs.Eval(1900+i)<g_xsec.Eval(1900+i)):print "Mass %d" %(1900+i)
-		if(g_exp.Eval(2000+i)<g_xsec.Eval(2000+i)):print "Mass %d" %(2000+i)
+		if(g_obs.Eval(1900+i)<g_xsec.Eval(1900+i)):print "Mass %d" %(1900+i)
+		#if(g_exp.Eval(2000+i)<g_xsec.Eval(2000+i)):print "Mass %d" %(2000+i)
 	#oneLine.Draw("LSAMES");
 	txta.Draw();
 	#txtb.Draw();
@@ -207,6 +237,8 @@ if __name__ == '__main__':
 	txtd.Draw();	
 	txte.Draw();	
 	leg.Draw();
+   	leg2.Draw();
+   	leg3.Draw();
 	g_xsecSdn.SetLineStyle(2);
 	g_xsecSup.SetLineStyle(2);
 	g_xsec.SetLineStyle(1);
