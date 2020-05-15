@@ -24,7 +24,7 @@ SignalJER lnN
 SignalRes lnN 
 SignalPrefire lnN 
 SignalScale lnN
-MassShapeUncStat lnN - 1.0101 - 1.0101 - 1.0101 - 1.0101 - 1.0101 - 1.0101
+MassShapeUncStat lnN - 1.033 - 1.033 - 1.033 - 1.033 - 1.033 - 1.033
 MassShapeUncSys lnN - 1.034 - 1.034 - 1.034 - 1.034 - 1.034 - 1.034
 METUncStat1 gmN 1191 - 0.198 - - - - - - - - - -
 METUncStat2 gmN 320 - - - 0.198 - - - - - - - -
